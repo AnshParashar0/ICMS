@@ -5,6 +5,7 @@ import com.icms.model.Complaint;
 import com.icms.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +20,8 @@ public class ComplaintController {
     private final ComplaintService complaintService;
 
     @PostMapping
-    public ResponseEntity<Complaint> createComplaint(
-            @RequestBody ComplaintRequest request,
-            @RequestHeader("Authorization") String token
-    ) {
-        return ResponseEntity.ok(complaintService.createComplaint(request, token));
+    public ResponseEntity<Complaint> createComplaint(@RequestBody @NonNull ComplaintRequest request) {
+        return ResponseEntity.ok(complaintService.createComplaint(request));
     }
 
     @GetMapping
@@ -33,17 +31,15 @@ public class ComplaintController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<Complaint>> myComplaints(
-            @RequestHeader("Authorization") String token
-    ) {
-        return ResponseEntity.ok(complaintService.getUserComplaints(token));
+    public ResponseEntity<List<Complaint>> myComplaints() {
+        return ResponseEntity.ok(complaintService.getUserComplaints());
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Complaint> updateStatus(
-            @PathVariable Long id,
-            @RequestParam Complaint.Status status
+            @PathVariable @NonNull Long id,
+            @RequestParam @NonNull Complaint.Status status
     ) {
         return ResponseEntity.ok(
                 complaintService.updateComplaintStatus(id, status)
@@ -52,7 +48,7 @@ public class ComplaintController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteComplaint(@PathVariable Long id) {
+    public ResponseEntity<?> deleteComplaint(@PathVariable @NonNull Long id) {
         complaintService.deleteComplaint(id);
         return ResponseEntity.ok("Complaint deleted");
     }

@@ -40,12 +40,23 @@ public class Complaint {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public enum Priority { LOW, MEDIUM, HIGH }
+    // Transient field for frontend display
+    @Transient
+    private String studentName;
+
+    public enum Priority { LOW, MEDIUM, HIGH, URGENT }
 
     public enum Status { PENDING, IN_PROGRESS, RESOLVED }
 
     @PrePersist
     void onCreate() {
         createdAt = LocalDateTime.now();
+    }
+
+    @PostLoad
+    void postLoad() {
+        if (user != null) {
+            this.studentName = user.getName();
+        }
     }
 }

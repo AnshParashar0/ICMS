@@ -1,5 +1,6 @@
 package com.icms.service;
 
+import com.icms.config.JwtUtil;
 import com.icms.dto.RegisterRequest;
 import com.icms.model.User;
 import com.icms.repository.UserRepository;
@@ -18,6 +19,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     // Spring Security uses this method to authenticate users
     @Override
@@ -65,5 +67,13 @@ public class UserService implements UserDetailsService {
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // Extract email from JWT token
+    public String extractEmailFromToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        return jwtUtil.extractUsername(token);
     }
 }

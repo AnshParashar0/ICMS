@@ -1,9 +1,11 @@
-
 package com.icms.service;
 
 import java.util.List;
 
 import com.icms.model.User;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.icms.dto.ComplaintRequest;
@@ -19,14 +21,16 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final UserService userService;
 
-    public Complaint createComplaint(ComplaintRequest request, String email) {
-
+    public @NonNull Complaint createComplaint(@NonNull ComplaintRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
         User user = userService.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("User not found"));
 
         Complaint complaint = Complaint.builder()
                 .complaintId("CMP" + System.currentTimeMillis())
                 .user(user)
+                .studentName(user.getName())
                 .category(request.getCategory())
                 .location(request.getLocation())
                 .description(request.getDescription())
@@ -38,24 +42,37 @@ public class ComplaintService {
         return complaintRepository.save(complaint);
     }
 
-    public List<Complaint> getAllComplaints() {
-        return complaintRepository.findAll();
+    public @NonNull List<Complaint> getAllComplaints() {
+        List<Complaint> complaints = complaintRepository.findAll();
+        complaints.forEach(complaint -> {
+            if (complaint.getUser() != null) {
+                complaint.setStudentName(complaint.getUser().getName());
+            }
+        });
+        return complaints;
     }
 
-    public Complaint updateComplaintStatus(Long id, Complaint.Status status) {
+        public @NonNull Complaint updateComplaintStatus(@NonNull Long id, @NonNull Complaint.Status status) {
         Complaint complaint = complaintRepository.findById(id).orElseThrow();
         complaint.setStatus(status);
         return complaintRepository.save(complaint);
     }
-    public List<Complaint> getUserComplaints(String email) {
+    public @NonNull List<Complaint> getUserComplaints() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    User user = userService.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        List<Complaint> complaints = complaintRepository.findByUser(user);
+        complaints.forEach(complaint -> {
+            if (complaint.getUser() != null) {
+                complaint.setStudentName(complaint.getUser().getName());
+            }
+        });
+        return complaints;
+    }
 
-    return complaintRepository.findByUser(user);
-}
-
-    public void deleteComplaint(Long id) {
+    public void deleteComplaint(@NonNull Long id) {
         complaintRepository.deleteById(id);
     }
 }

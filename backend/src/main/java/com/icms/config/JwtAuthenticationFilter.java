@@ -27,31 +27,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+protected void doFilterInternal(HttpServletRequest request,
+                                HttpServletResponse response,
+                                FilterChain filterChain)
+        throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
+    String authHeader = request.getHeader("Authorization");
+    String token = null;
+    String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7);
+        try {
             username = jwtUtil.extractUsername(token);
+        } catch (Exception e) {
+            System.err.println("JWT extraction failed: " + e.getMessage());
         }
+    }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        try {
             UserDetails userDetails = userService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                System.err.println("JWT validation failed for user: " + username);
             }
+        } catch (Exception e) {
+            System.err.println("Authentication error: " + e.getMessage());
         }
-
-        filterChain.doFilter(request, response);
     }
+
+    filterChain.doFilter(request, response);
+}
 }

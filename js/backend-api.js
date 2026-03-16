@@ -19,48 +19,51 @@ class ApiClient {
   }
 
   async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+  const url = `${this.baseURL}${endpoint}`;
 
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-      ...options,
-    };
+  // ✅ Read token fresh on every request to avoid stale module-level variable
+  const currentToken = localStorage.getItem("icms_token");
 
-    // Attach JWT token if available
-    if (authToken) {
-      config.headers.Authorization = `Bearer ${authToken}`;
-    }
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  };
 
-    try {
-      const response = await fetch(url, config);
-
-      // Safely read response text first
-      const text = await response.text();
-      let data = null;
-
-      if (text) {
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          console.warn("Response is not JSON:", text);
-        }
-      }
-
-      if (!response.ok) {
-        const message =
-          data?.message || `Request failed with status ${response.status}`;
-        throw new Error(message);
-      }
-
-      return data;
-    } catch (error) {
-      console.error("API Error:", error);
-      throw error;
-    }
+  // Attach JWT token if available
+  if (currentToken) {
+    config.headers.Authorization = `Bearer ${currentToken}`;
   }
+
+  try {
+    const response = await fetch(url, config);
+
+    // Safely read response text first
+    const text = await response.text();
+    let data = null;
+
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.warn("Response is not JSON:", text);
+      }
+    }
+
+    if (!response.ok) {
+      const message =
+        data?.message || `Request failed with status ${response.status}`;
+      throw new Error(message);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+}
 
   // =========================
   // HTTP METHODS
