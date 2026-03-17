@@ -20,12 +20,13 @@ public class ComplaintService {
 
     private final ComplaintRepository complaintRepository;
     private final UserService userService;
+    private final EmailService emailService; // ✅ inject email service
 
     public @NonNull Complaint createComplaint(@NonNull ComplaintRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userService.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Complaint complaint = Complaint.builder()
                 .complaintId("CMP" + System.currentTimeMillis())
@@ -52,11 +53,23 @@ public class ComplaintService {
         return complaints;
     }
 
-        public @NonNull Complaint updateComplaintStatus(@NonNull Long id, @NonNull Complaint.Status status) {
+    public @NonNull Complaint updateComplaintStatus(@NonNull Long id, @NonNull Complaint.Status status) {
         Complaint complaint = complaintRepository.findById(id).orElseThrow();
         complaint.setStatus(status);
-        return complaintRepository.save(complaint);
+        Complaint updated = complaintRepository.save(complaint);
+
+        // ✅ Send email notification (silently fails if email is invalid)
+        if (updated.getUser() != null) {
+            emailService.sendStatusUpdateEmail(
+                updated.getUser().getEmail(),
+                updated.getComplaintId(),
+                status.name()
+            );
+        }
+
+        return updated;
     }
+
     public @NonNull List<Complaint> getUserComplaints() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();

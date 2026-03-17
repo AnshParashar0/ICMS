@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { complaintsAPI, apiUtils } from '../backend-api'
+import { complaintsAPI } from '../backend-api'
+import { toast } from 'react-toastify'
 
 function RaiseComplaintPage() {
   const [currentUser, setCurrentUser] = useState(null)
@@ -46,13 +47,14 @@ function RaiseComplaintPage() {
         contactNumber,
       })
       setSuccessId(newComplaint.complaintId)
+      toast.success('Complaint submitted successfully! 🎉')
       setCategory('')
       setLocation('')
       setDescription('')
       setPriority('')
       setContactNumber('')
     } catch (err) {
-      apiUtils.handleError(err, 'Failed to submit complaint')
+      toast.error('Failed to submit complaint. Please try again.')
     } finally {
       setLoading(false)
     }

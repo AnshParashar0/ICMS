@@ -38,8 +38,8 @@ public class ComplaintController {
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Complaint> updateStatus(
-            @PathVariable @NonNull Long id,
-            @RequestParam @NonNull Complaint.Status status
+            @PathVariable("id") @NonNull Long id,
+            @RequestParam("status") @NonNull Complaint.Status status
     ) {
         return ResponseEntity.ok(
                 complaintService.updateComplaintStatus(id, status)
