@@ -3,10 +3,12 @@ C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\config\SecurityConfig.
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\dto\ComplaintRequest.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\config\JwtAuthenticationFilter.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\IcmsApplication.java
+C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\service\EmailService.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\model\Complaint.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\repository\ComplaintRepository.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\controller\ComplaintController.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\model\User.java
+C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\config\WebConfig.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\dto\LoginRequest.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\repository\UserRepository.java
 C:\Users\ASUS\Desktop\ICMS\backend\src\main\java\com\icms\config\JwtUtil.java

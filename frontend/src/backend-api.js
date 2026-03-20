@@ -50,10 +50,18 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        const message =
-          data?.message || `Request failed with status ${response.status}`;
-        throw new Error(message);
-      }
+  if (response.status === 400) {
+    throw new Error(data?.message || 'Invalid request');
+  } else if (response.status === 401) {
+    throw new Error(data?.message || 'Invalid email or password');
+  } else if (response.status === 403) {
+    throw new Error(data?.message || 'Access denied');
+  } else if (response.status === 500) {
+    throw new Error(data?.message || 'Server error. Please try again.');
+  } else {
+    throw new Error(data?.message || 'Something went wrong');
+  }
+}
 
       return data;
     } catch (error) {
@@ -164,9 +172,32 @@ export const complaintsAPI = {
     return await api.get("/complaints/my");
   },
 
-  async createComplaint(complaintData) {
-    return await api.post("/complaints", complaintData);
-  },
+  async createComplaint(formData) {
+  // ✅ Send FormData directly, no JSON stringify
+  const url = `${API_BASE_URL}/complaints`;
+  const currentToken = localStorage.getItem("icms_token");
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      // ✅ Don't set Content-Type — browser sets it automatically for FormData
+      ...(currentToken ? { Authorization: `Bearer ${currentToken}` } : {}),
+    },
+    body: formData,
+  });
+
+  const text = await response.text();
+  let data = null;
+  if (text) {
+    try { data = JSON.parse(text); } catch (e) { console.warn("Not JSON:", text); }
+  }
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Failed to create complaint");
+  }
+
+  return data;
+},
 
   async updateComplaintStatus(id, status) {
     return await api.put(`/complaints/${id}/status`, {}, { status });

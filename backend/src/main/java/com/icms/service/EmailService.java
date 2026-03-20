@@ -13,7 +13,6 @@ public class EmailService {
 
     public void sendStatusUpdateEmail(String toEmail, String complaintId, String newStatus) {
         try {
-            // Skip invalid/test emails
             if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
                 System.out.println("Skipping email for: " + toEmail);
                 return;
@@ -22,18 +21,37 @@ public class EmailService {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
             message.setSubject("ICMS - Complaint Status Updated: " + complaintId);
-            message.setText(buildEmailBody(complaintId, newStatus));
+            message.setText(buildStatusEmailBody(complaintId, newStatus));
 
             mailSender.send(message);
-            System.out.println("Email sent to: " + toEmail);
+            System.out.println("Status email sent to: " + toEmail);
 
         } catch (Exception e) {
-            // Never crash status update due to email failure
             System.err.println("Email sending failed (non-critical): " + e.getMessage());
         }
     }
 
-    private String buildEmailBody(String complaintId, String status) {
+    public void sendWelcomeEmail(String toEmail, String name) {
+        try {
+            if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
+                System.out.println("Skipping welcome email for: " + toEmail);
+                return;
+            }
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Welcome to ICMS - Infrastructure Complaint Management System");
+            message.setText(buildWelcomeEmailBody(name));
+
+            mailSender.send(message);
+            System.out.println("Welcome email sent to: " + toEmail);
+
+        } catch (Exception e) {
+            System.err.println("Welcome email failed (non-critical): " + e.getMessage());
+        }
+    }
+
+    private String buildStatusEmailBody(String complaintId, String status) {
         String statusText = switch (status) {
             case "IN_PROGRESS" -> "In Progress - Our team is working on it";
             case "RESOLVED" -> "Resolved - Your complaint has been resolved";
@@ -53,5 +71,23 @@ public class EmailService {
                 Regards,
                 ICMS Team
                 """.formatted(complaintId, statusText);
+    }
+
+    private String buildWelcomeEmailBody(String name) {
+        return """
+                Dear %s,
+
+                Welcome to ICMS - Infrastructure Complaint Management System!
+
+                Your account has been created successfully. You can now:
+                - Submit infrastructure complaints
+                - Track the status of your complaints
+                - Get notified when your complaint is updated
+
+                Login at: http://localhost:5173
+
+                Regards,
+                ICMS Team
+                """.formatted(name);
     }
 }

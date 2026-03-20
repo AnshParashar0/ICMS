@@ -1,6 +1,5 @@
 package com.icms.controller;
 
-import com.icms.dto.ComplaintRequest;
 import com.icms.model.Complaint;
 import com.icms.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,9 +19,18 @@ public class ComplaintController {
 
     private final ComplaintService complaintService;
 
-    @PostMapping
-    public ResponseEntity<Complaint> createComplaint(@RequestBody @NonNull ComplaintRequest request) {
-        return ResponseEntity.ok(complaintService.createComplaint(request));
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<Complaint> createComplaint(
+            @RequestParam("category") String category,
+            @RequestParam("location") String location,
+            @RequestParam("description") String description,
+            @RequestParam("priority") String priority,
+            @RequestParam(value = "contactNumber", required = false) String contactNumber,
+            @RequestParam(value = "image", required = false) MultipartFile image
+    ) {
+        return ResponseEntity.ok(complaintService.createComplaint(
+                category, location, description, priority, contactNumber, image
+        ));
     }
 
     @GetMapping
@@ -41,9 +50,7 @@ public class ComplaintController {
             @PathVariable("id") @NonNull Long id,
             @RequestParam("status") @NonNull Complaint.Status status
     ) {
-        return ResponseEntity.ok(
-                complaintService.updateComplaintStatus(id, status)
-        );
+        return ResponseEntity.ok(complaintService.updateComplaintStatus(id, status));
     }
 
     @DeleteMapping("/{id}")

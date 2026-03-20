@@ -37,15 +37,16 @@ public class Complaint {
 
     private String contactNumber;
 
+    // ✅ New image path field
+    private String imagePath;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Transient field for frontend display
     @Transient
     private String studentName;
 
     public enum Priority { LOW, MEDIUM, HIGH, URGENT }
-
     public enum Status { PENDING, IN_PROGRESS, RESOLVED }
 
     @PrePersist
