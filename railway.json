@@ -1,0 +1,8 @@
+{
+  "build": {
+    "command": "cd backend && mvn clean package"
+  },
+  "start": {
+    "command": "cd backend && java -jar target/icms-backend-1.0.0.jar"
+  }
+}
