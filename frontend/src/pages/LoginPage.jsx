@@ -102,7 +102,7 @@ function LoginPage() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#ffffff', overflowY: 'auto', minWidth: 0 }}>
         {/* Centered form */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2.5rem 2rem' }}>
-          <div style={{ width: '100%', maxWidth: '700px' }}>
+          <div style={{ width: '100%', maxWidth: '600px', minHeight: '15vh', overflowY: 'auto' }}>
 
             {/* Mobile Logo */}
             <div className="d-lg-none mb-4">
