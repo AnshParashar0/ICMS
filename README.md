@@ -282,7 +282,7 @@ VITE_API_BASE_URL=http://localhost:8081/api
 
 | Name | Role |
 |---|---|
-| Ansh Parashar | Full Stack Developer | Ansh Gupta | Testing Lead |
+| Ansh Parashar | Full Stack Developer | | Ansh Gupta | Testing Lead |
 | Anshul Gupta | idea and innovation Lead |
 
 ### Mentor / Guide
