@@ -1,9 +1,247 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authAPI } from '../backend-api'
 import { toast } from 'react-toastify'
 import logo from '../assets/vecteezy_modern-real-estate-and-construction-logo_19897563.png'
 
+// ─── OTP Verification Step ──────────────────────────────────────────────────
+function OtpStep({ email, onBack, onSuccess }) {
+  const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [otpError, setOtpError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
+  const [resending, setResending] = useState(false)
+  const inputRefs = useRef([])
+  const timerRef = useRef(null)
+
+  // Start 30s cooldown on mount (OTP just sent)
+  useEffect(() => {
+    startCooldown()
+    return () => clearInterval(timerRef.current)
+  }, [])
+
+  const startCooldown = () => {
+    setResendCooldown(30)
+    clearInterval(timerRef.current)
+    timerRef.current = setInterval(() => {
+      setResendCooldown(prev => {
+        if (prev <= 1) { clearInterval(timerRef.current); return 0 }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  const handleOtpChange = (val, idx) => {
+    if (!/^\d*$/.test(val)) return
+    const next = [...otp]
+    next[idx] = val.slice(-1)
+    setOtp(next)
+    setOtpError('')
+    if (val && idx < 5) inputRefs.current[idx + 1]?.focus()
+  }
+
+  const handleOtpKeyDown = (e, idx) => {
+    if (e.key === 'Backspace' && !otp[idx] && idx > 0) {
+      inputRefs.current[idx - 1]?.focus()
+    }
+  }
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (pasted.length === 6) {
+      setOtp(pasted.split(''))
+      inputRefs.current[5]?.focus()
+    }
+  }
+
+  const handleVerify = async () => {
+    const otpValue = otp.join('')
+    if (otpValue.length < 6) { setOtpError('Please enter the complete 6-digit OTP'); return }
+    try {
+      setLoading(true)
+      await authAPI.verifyOtp(email, otpValue)
+      toast.success('✅ Account created! Please login to continue.')
+      onSuccess()
+    } catch (err) {
+      setOtpError(err.message || 'Invalid OTP. Please try again.')
+      setOtp(['', '', '', '', '', ''])
+      inputRefs.current[0]?.focus()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    try {
+      setResending(true)
+      await authAPI.resendOtp(email)
+      toast.success('OTP resent! Check your email.')
+      startCooldown()
+      setOtp(['', '', '', '', '', ''])
+      setOtpError('')
+      inputRefs.current[0]?.focus()
+    } catch (err) {
+      toast.error(err.message || 'Failed to resend OTP.')
+    } finally {
+      setResending(false)
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#ffffff', padding: '2rem' }}>
+      <div style={{ width: '100%', maxWidth: '440px' }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem' }}>
+          <img src={logo} alt="ICMS" style={{ width: '44px', height: '44px', objectFit: 'contain' }} />
+          <span style={{ fontWeight: '800', fontSize: '1.15rem', color: '#1e1b4b' }}>ICMS</span>
+        </div>
+
+        {/* Icon */}
+        <div style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'linear-gradient(135deg, #ede9fe, #ddd6fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+        </div>
+
+        <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem', letterSpacing: '-0.5px' }}>
+          Verify your email
+        </h1>
+        <p style={{ color: '#6b7280', fontSize: '0.95rem', marginBottom: '0.5rem', lineHeight: 1.6 }}>
+          We sent a 6-digit OTP to
+        </p>
+        <p style={{ color: '#4f46e5', fontWeight: '700', fontSize: '0.95rem', marginBottom: '2rem', wordBreak: 'break-all' }}>
+          {email}
+        </p>
+
+        {/* OTP boxes */}
+        <div style={{ display: 'flex', gap: '0.625rem', marginBottom: '1.25rem', justifyContent: 'center' }} onPaste={handleOtpPaste}>
+          {otp.map((digit, idx) => (
+            <input
+              key={idx}
+              ref={el => inputRefs.current[idx] = el}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              onChange={e => handleOtpChange(e.target.value, idx)}
+              onKeyDown={e => handleOtpKeyDown(e, idx)}
+              style={{
+                width: '52px',
+                height: '56px',
+                textAlign: 'center',
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                borderRadius: '12px',
+                border: `2px solid ${otpError ? '#f87171' : digit ? '#4f46e5' : '#e5e7eb'}`,
+                background: digit ? '#f5f3ff' : '#f9fafb',
+                color: '#111827',
+                outline: 'none',
+                transition: 'border-color 0.2s, background 0.2s',
+                caretColor: '#4f46e5',
+              }}
+            />
+          ))}
+        </div>
+
+        {otpError && (
+          <div style={{ color: '#dc2626', fontSize: '0.85rem', textAlign: 'center', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>
+            {otpError}
+          </div>
+        )}
+
+        {/* Verify button */}
+        <button
+          onClick={handleVerify}
+          disabled={loading}
+          style={{
+            width: '100%',
+            background: 'linear-gradient(135deg, #4f46e5, #6d28d9)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '0.875rem',
+            fontSize: '1rem',
+            fontWeight: '700',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            opacity: loading ? 0.8 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 14px rgba(79,70,229,0.35)',
+            transition: 'opacity 0.2s, transform 0.1s',
+            marginBottom: '1rem',
+          }}
+          onMouseOver={e => { if (!loading) e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)' }}
+        >
+          {loading ? (
+            <>
+              <span style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.6s linear infinite' }} />
+              Verifying...
+            </>
+          ) : 'Verify & Create Account'}
+        </button>
+
+        {/* Resend + Edit row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <button
+            onClick={handleResend}
+            disabled={resendCooldown > 0 || resending}
+            style={{
+              background: 'none', border: 'none', padding: 0,
+              color: resendCooldown > 0 ? '#9ca3af' : '#4f46e5',
+              fontSize: '0.875rem', fontWeight: '600',
+              cursor: resendCooldown > 0 ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: '5px',
+            }}
+          >
+            {resending ? (
+              <span style={{ width: '12px', height: '12px', border: '2px solid #9ca3af', borderTopColor: '#4f46e5', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.6s linear infinite' }} />
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+            )}
+            {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend OTP'}
+          </button>
+
+          <button
+            onClick={onBack}
+            style={{
+              background: 'none', border: '1.5px solid #e5e7eb', borderRadius: '8px',
+              padding: '0.45rem 0.9rem', color: '#374151', fontSize: '0.875rem',
+              fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px',
+              transition: 'border-color 0.2s',
+            }}
+            onMouseOver={e => e.currentTarget.style.borderColor = '#9ca3af'}
+            onMouseOut={e => e.currentTarget.style.borderColor = '#e5e7eb'}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+            </svg>
+            Edit Details
+          </button>
+        </div>
+
+        <p style={{ marginTop: '2rem', color: '#9ca3af', fontSize: '0.8rem', textAlign: 'center', lineHeight: 1.6 }}>
+          Didn't receive the email? Check your spam folder or use <strong>Edit Details</strong> if your email was incorrect.
+        </p>
+      </div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        input[type="text"]:focus { border-color: #4f46e5 !important; box-shadow: 0 0 0 3px rgba(79,70,229,0.15); background: #f5f3ff !important; }
+      `}</style>
+    </div>
+  )
+}
+
+// ─── Registration Form ──────────────────────────────────────────────────────
 function RegisterPage() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -18,6 +256,11 @@ function RegisterPage() {
   const [formError, setFormError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+
+  // OTP step state
+  const [step, setStep] = useState('register') // 'register' | 'otp'
+  const [pendingEmail, setPendingEmail] = useState('')
+
   const navigate = useNavigate()
 
   const validate = () => {
@@ -38,15 +281,9 @@ function RegisterPage() {
     try {
       setLoading(true)
       await authAPI.register({ name: fullName, email, password, contactNumber })
-      const loginResponse = await authAPI.login({ email, password })
-      const currentUser = {
-        email: loginResponse.user.email,
-        name: loginResponse.user.name,
-        type: loginResponse.user.role.toLowerCase(),
-      }
-      localStorage.setItem('currentUser', JSON.stringify(currentUser))
-      toast.success('Account created successfully! Welcome to ICMS 🎉')
-      setTimeout(() => navigate('/student-dashboard'), 1500)
+      toast.info(`📧 OTP sent to ${email}. Please check your inbox.`)
+      setPendingEmail(email)
+      setStep('otp')
     } catch (err) {
       const message = err.message || ''
       if (message === 'Email already exists') {
@@ -60,6 +297,22 @@ function RegisterPage() {
     }
   }
 
+  // OTP verified → go to login
+  const handleOtpSuccess = () => {
+    setTimeout(() => navigate('/'), 500)
+  }
+
+  // Back from OTP → restore form (email stays pre-filled so they can correct it)
+  const handleBack = () => {
+    setStep('register')
+  }
+
+  // ── Render OTP step ────────────────────────────────────────────────────
+  if (step === 'otp') {
+    return <OtpStep email={pendingEmail} onBack={handleBack} onSuccess={handleOtpSuccess} />
+  }
+
+  // ── Render Register form ───────────────────────────────────────────────
   const inputStyle = (hasError) => ({
     width: '100%',
     padding: '0.8rem 1rem',
@@ -102,11 +355,7 @@ function RegisterPage() {
       {/* Logo */}
       <div className="w-100">
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <img
-            src={logo}
-            alt="ICMS Logo"
-            style={{ width: '58px', height: '58px', objectFit: 'contain', mixBlendMode: 'screen', flexShrink: 0 }}
-          />
+          <img src={logo} alt="ICMS Logo" style={{ width: '58px', height: '58px', objectFit: 'contain', mixBlendMode: 'screen', flexShrink: 0 }} />
           <div>
             <div style={{ fontWeight: '800', fontSize: '1.25rem', letterSpacing: '-0.5px' }}>ICMS</div>
             <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Infrastructure Complaint System</div>
@@ -127,8 +376,8 @@ function RegisterPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
           {[
             { step: '01', title: 'Create Account', desc: 'Register with your college email' },
-            { step: '02', title: 'Submit Complaint', desc: 'Describe the infrastructure issue' },
-            { step: '03', title: 'Track & Resolve', desc: 'Get notified on every update' },
+            { step: '02', title: 'Verify Email', desc: 'Enter the OTP sent to your inbox' },
+            { step: '03', title: 'Submit & Track', desc: 'Describe the issue and track progress' },
           ].map((item) => (
             <div key={item.step} style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1rem', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(165,243,252,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800', color: '#a5f3fc', flexShrink: 0 }}>
@@ -177,15 +426,8 @@ function RegisterPage() {
     <div style={{ minHeight: '100vh', display: 'flex' }}>
       <LeftPanel />
 
-      {/* Right Side - Pod.ai style */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#ffffff',
-        overflowY: 'auto',
-        minWidth: 0,
-      }}>
+      {/* Right Side */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#ffffff', overflowY: 'auto', minWidth: 0 }}>
         {/* Main content area */}
         <div style={{ flex: 1, padding: '2.5rem 3.5rem 2rem' }}>
 
@@ -206,13 +448,7 @@ function RegisterPage() {
           </p>
 
           {/* Institution search box */}
-          <div style={{
-            background: '#f3f0ff',
-            borderRadius: '14px',
-            padding: '1.25rem 1.5rem',
-            marginBottom: '1.75rem',
-            position: 'relative',
-          }}>
+          <div style={{ background: '#f3f0ff', borderRadius: '14px', padding: '1.25rem 1.5rem', marginBottom: '1.75rem', position: 'relative' }}>
             <p style={{ fontWeight: '700', color: '#1f2937', fontSize: '1rem', marginBottom: '0.9rem' }}>
               Search for your institution or department to get started.
             </p>
@@ -223,23 +459,8 @@ function RegisterPage() {
                     <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </span>
-                <input
-                  type="text"
-                  placeholder="Please specify the name of your institution or department"
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 0.75rem 0.75rem 2.6rem',
-                    borderRadius: '10px',
-                    border: '1.5px solid #e5e7eb',
-                    background: '#ffffff',
-                    fontSize: '0.875rem',
-                    color: '#374151',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                />
+                <input type="text" placeholder="Please specify the name of your institution or department" style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.6rem', borderRadius: '10px', border: '1.5px solid #e5e7eb', background: '#ffffff', fontSize: '0.875rem', color: '#374151', outline: 'none', boxSizing: 'border-box' }} />
               </div>
-              {/* Decorative figure */}
               <div style={{ flexShrink: 0 }}>
                 <svg width="64" height="72" viewBox="0 0 64 72" fill="none">
                   <circle cx="32" cy="14" r="9" fill="#7c3aed" opacity="0.15" />
@@ -266,24 +487,12 @@ function RegisterPage() {
             <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }} />
           </div>
 
-          {/* Register section heading */}
           <p style={{ color: '#374151', fontSize: '1rem', marginBottom: '1.25rem', fontWeight: '400' }}>
             Create your account directly using ICMS credentials.
           </p>
 
           {formError && (
-            <div style={{
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: '10px',
-              padding: '0.75rem 1rem',
-              marginBottom: '1rem',
-              color: '#dc2626',
-              fontSize: '0.875rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
+            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1rem', color: '#dc2626', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>
               {formError}
             </div>
@@ -294,60 +503,31 @@ function RegisterPage() {
             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.85rem' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Full Name</label>
-                <input
-                  type="text"
-                  id="fullName"
-                  placeholder="Enter your full name"
-                  value={fullName}
-                  onChange={(e) => { setFullName(e.target.value); setNameError('') }}
-                  style={inputStyle(nameError)}
-                />
+                <input type="text" id="fullName" placeholder="Enter your full name" value={fullName} onChange={(e) => { setFullName(e.target.value); setNameError('') }} style={inputStyle(nameError)} />
                 {nameError && <div style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px' }}>{nameError}</div>}
               </div>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>
                   Contact Number <span style={{ color: '#9ca3af', fontWeight: '400' }}>(Optional)</span>
                 </label>
-                <input
-                  type="tel"
-                  id="contactNumber"
-                  placeholder="Enter your contact number"
-                  value={contactNumber}
-                  onChange={(e) => setContactNumber(e.target.value)}
-                  style={inputStyle(false)}
-                />
+                <input type="tel" id="contactNumber" placeholder="Enter your contact number" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} style={inputStyle(false)} />
               </div>
             </div>
 
             {/* Row 2: Email */}
             <div style={{ marginBottom: '0.85rem' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Email Address</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setEmailError('') }}
-                style={inputStyle(emailError)}
-              />
+              <input type="email" id="email" placeholder="Enter your email address" value={email} onChange={(e) => { setEmail(e.target.value); setEmailError('') }} style={inputStyle(emailError)} />
               {emailError && <div style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px' }}>{emailError}</div>}
             </div>
 
-            {/* Row 3: Password + Confirm Password */}
+            {/* Row 3: Password + Confirm */}
             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    placeholder="Min 6 characters"
-                    value={password}
-                    onChange={(e) => { setPassword(e.target.value); setPasswordError('') }}
-                    style={{ ...inputStyle(passwordError), paddingRight: '2.8rem' }}
-                  />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}>
+                  <input type={showPassword ? 'text' : 'password'} id="password" placeholder="Min 6 characters" value={password} onChange={(e) => { setPassword(e.target.value); setPasswordError('') }} style={{ ...inputStyle(passwordError), paddingRight: '2.8rem' }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}>
                     <EyeIcon open={showPassword} />
                   </button>
                 </div>
@@ -356,16 +536,8 @@ function RegisterPage() {
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Confirm Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input
-                    type={showConfirm ? 'text' : 'password'}
-                    id="confirmPassword"
-                    placeholder="Confirm your password"
-                    value={confirmPassword}
-                    onChange={(e) => { setConfirmPassword(e.target.value); setConfirmPasswordError('') }}
-                    style={{ ...inputStyle(confirmPasswordError), paddingRight: '2.8rem' }}
-                  />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}>
+                  <input type={showConfirm ? 'text' : 'password'} id="confirmPassword" placeholder="Confirm your password" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setConfirmPasswordError('') }} style={{ ...inputStyle(confirmPasswordError), paddingRight: '2.8rem' }} />
+                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}>
                     <EyeIcon open={showConfirm} />
                   </button>
                 </div>
@@ -373,36 +545,21 @@ function RegisterPage() {
               </div>
             </div>
 
-            {/* Submit button - right aligned */}
+            {/* Submit button */}
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  background: 'linear-gradient(135deg, #4f46e5, #6d28d9)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '0.75rem 2.25rem',
-                  fontSize: '0.95rem',
-                  fontWeight: '600',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.8 : 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  transition: 'opacity 0.2s, transform 0.1s',
-                  boxShadow: '0 4px 14px rgba(79, 70, 229, 0.35)',
-                }}
+                style={{ background: 'linear-gradient(135deg, #4f46e5, #6d28d9)', color: '#ffffff', border: 'none', borderRadius: '10px', padding: '0.75rem 2.25rem', fontSize: '0.95rem', fontWeight: '600', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, display: 'flex', alignItems: 'center', gap: '8px', transition: 'opacity 0.2s, transform 0.1s', boxShadow: '0 4px 14px rgba(79, 70, 229, 0.35)' }}
                 onMouseOver={e => { if (!loading) e.currentTarget.style.transform = 'translateY(-1px)' }}
                 onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)' }}
               >
                 {loading ? (
                   <>
                     <span style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.6s linear infinite' }} />
-                    Creating account...
+                    Sending OTP...
                   </>
-                ) : 'Create Account'}
+                ) : 'Continue →'}
               </button>
             </div>
           </form>
@@ -410,31 +567,18 @@ function RegisterPage() {
           {/* Login link */}
           <p style={{ marginTop: '1.5rem', color: '#6b7280', fontSize: '0.975rem' }}>
             Already have an account?{' '}
-            <Link to="/" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none' }}>
-              Login here
-            </Link>
+            <Link to="/" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none' }}>Login here</Link>
           </p>
         </div>
 
         {/* Footer */}
-        <div style={{
-          borderTop: '1px solid #f3f4f6',
-          padding: '1rem 3.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-        }}>
+        <div style={{ borderTop: '1px solid #f3f4f6', padding: '1rem 3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <img src={logo} alt="ICMS Logo" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.12))' }} />
               <span style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1f2937' }}>ICMS</span>
             </div>
-            <a href="mailto:support@icms.edu" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
-              support@icms.edu
-            </a>
+            <a href="mailto:support@icms.edu" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>support@icms.edu</a>
             <a href="#" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none' }}>Terms of Use</a>
             <a href="#" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none' }}>Privacy Policy</a>
           </div>

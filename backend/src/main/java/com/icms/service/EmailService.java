@@ -73,6 +73,47 @@ public class EmailService {
                 """.formatted(complaintId, statusText);
     }
 
+    public void sendOtpEmail(String toEmail, String name, String otp) {
+        try {
+            if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
+                System.out.println("Skipping OTP email for: " + toEmail);
+                return;
+            }
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("ICMS - Your Email Verification OTP");
+            message.setText(buildOtpEmailBody(name, otp));
+
+            mailSender.send(message);
+            System.out.println("OTP email sent to: " + toEmail);
+
+        } catch (Exception e) {
+            System.err.println("OTP email sending failed (non-critical): " + e.getMessage());
+        }
+    }
+
+    private String buildOtpEmailBody(String name, String otp) {
+        return """
+                Dear %s,
+
+                Thank you for registering with ICMS - Infrastructure Complaint Management System!
+
+                Your Email Verification OTP is:
+
+                ==============================
+                        %s
+                ==============================
+
+                This OTP is valid for 10 minutes. Do not share it with anyone.
+
+                If you did not request this, please ignore this email.
+
+                Regards,
+                ICMS Team
+                """.formatted(name, otp);
+    }
+
     private String buildWelcomeEmailBody(String name) {
         return """
                 Dear %s,

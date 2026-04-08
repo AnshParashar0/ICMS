@@ -14,8 +14,8 @@ export function SkeletonBlock({ width = '100%', height = 20, borderRadius = 8, s
 export function StatCardSkeleton() {
   return (
     <div style={{
-      background: '#111827',
-      border: '1px solid rgba(255,255,255,0.08)',
+      background: '#ffffff',
+      border: '1px solid #e5e7eb',
       borderRadius: '16px',
       padding: '1.5rem',
     }}>

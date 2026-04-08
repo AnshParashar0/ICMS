@@ -20,11 +20,11 @@ function RepeatComplaintsCard() {
             transition={{ delay: i * 0.07 }}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '0.8rem 0', borderBottom: i < repeatComplaints.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+              padding: '0.8rem 0', borderBottom: i < repeatComplaints.length - 1 ? '1px solid #f3f4f6' : 'none',
             }}
           >
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: '600', color: '#e5e7eb', fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontWeight: '600', color: '#111827', fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {item.location}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '2px' }}>{item.category}</div>
@@ -58,11 +58,11 @@ function EscalatedCard() {
           </div>
         </div>
       </div>
-      <p style={{ fontSize: '0.82rem', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>
+      <p style={{ fontSize: '0.82rem', color: '#4b5563', lineHeight: 1.6, margin: 0 }}>
         These complaints exceeded their expected resolution time and were escalated to senior management.
       </p>
 
-      <div style={{ marginTop: '1.25rem', padding: '1rem', background: 'rgba(251,191,36,0.06)', borderRadius: '10px', border: '1px solid rgba(251,191,36,0.15)' }}>
+      <div style={{ marginTop: '1.25rem', padding: '1rem', background: 'rgba(217,119,6,0.06)', borderRadius: '10px', border: '1px solid rgba(217,119,6,0.15)' }}>
         <div style={{ fontSize: '0.78rem', color: '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>Impact Breakdown</div>
         {[
           { label: 'Road / Civil',    count: 5, color: '#f87171' },
@@ -71,7 +71,7 @@ function EscalatedCard() {
           { label: 'Other',           count: 2, color: '#6b7280' },
         ].map(item => (
           <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-            <span style={{ fontSize: '0.82rem', color: '#d1d5db' }}>{item.label}</span>
+            <span style={{ fontSize: '0.82rem', color: '#374151' }}>{item.label}</span>
             <span style={{ fontSize: '0.82rem', fontWeight: '700', color: item.color }}>×{item.count}</span>
           </div>
         ))}
@@ -101,10 +101,10 @@ function SummaryInsights({ complaints }) {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         {insights.map(ins => (
-          <div key={ins.label} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div key={ins.label} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
             <i className={`bi ${ins.icon}`} style={{ color: ins.color, fontSize: '1.1rem', marginBottom: '8px', display: 'block' }} />
             <div style={{ fontSize: '1.4rem', fontWeight: '800', color: ins.color, lineHeight: 1 }}>{ins.value}</div>
-            <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '4px' }}>{ins.label}</div>
+            <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px' }}>{ins.label}</div>
           </div>
         ))}
       </div>
@@ -116,8 +116,8 @@ export default function AdvancedInsights({ complaints }) {
   return (
     <div>
       <div style={{ marginBottom: '1rem' }}>
-        <h3 style={{ color: '#f9fafb', fontWeight: '800', fontSize: '1.05rem', margin: 0 }}>
-          <i className="bi bi-binoculars" style={{ color: '#22d3ee', marginRight: '8px' }} />
+        <h3 style={{ color: '#111827', fontWeight: '800', fontSize: '1.05rem', margin: 0 }}>
+          <i className="bi bi-binoculars" style={{ color: '#4f46e5', marginRight: '8px' }} />
           Advanced Insights
         </h3>
       </div>

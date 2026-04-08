@@ -26,7 +26,7 @@ export default function ComplaintsLineChart({ loading, error, onRetry }) {
   const xKey = mode === 'daily' ? 'date' : 'week'
 
   const toggleBtn = (
-    <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '8px', padding: '3px' }}>
+    <div style={{ display: 'flex', gap: '4px', background: '#f3f4f6', borderRadius: '8px', padding: '3px' }}>
       {['daily', 'weekly'].map(m => (
         <button
           key={m}
@@ -34,7 +34,7 @@ export default function ComplaintsLineChart({ loading, error, onRetry }) {
           style={{
             padding: '4px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer',
             fontSize: '0.78rem', fontWeight: '600',
-            background: mode === m ? '#1d4ed8' : 'transparent',
+            background: mode === m ? '#4f46e5' : 'transparent',
             color: mode === m ? '#fff' : '#9ca3af',
             transition: 'all 0.15s',
           }}
@@ -61,7 +61,7 @@ export default function ComplaintsLineChart({ loading, error, onRetry }) {
       <div className="an-card-body">
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis
               dataKey={xKey}
               tick={{ fill: '#9ca3af', fontSize: 11 }}

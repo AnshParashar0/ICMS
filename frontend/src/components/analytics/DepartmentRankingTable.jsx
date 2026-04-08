@@ -44,26 +44,26 @@ export default function DepartmentRankingTable() {
                   <div style={{
                     width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center',
                     justifyContent: 'center', fontWeight: '800', fontSize: '0.82rem',
-                    background: i < 3 ? `${RANK_COLORS[i]}18` : 'rgba(255,255,255,0.04)',
+                    background: i < 3 ? `${RANK_COLORS[i]}18` : '#f9fafb',
                     color: i < 3 ? RANK_COLORS[i] : '#9ca3af',
-                    border: `1.5px solid ${i < 3 ? RANK_COLORS[i] + '40' : 'rgba(255,255,255,0.06)'}`,
+                    border: `1.5px solid ${i < 3 ? RANK_COLORS[i] + '40' : '#e5e7eb'}`,
                   }}>
                     {row.rank}
                   </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: '600', color: '#e5e7eb' }}>{row.dept}</div>
+                  <div style={{ fontWeight: '600', color: '#111827' }}>{row.dept}</div>
                 </td>
                 <td>
-                  <span style={{ fontWeight: '700', color: '#60a5fa' }}>{row.handled}</span>
+                  <span style={{ fontWeight: '700', color: '#4f46e5' }}>{row.handled}</span>
                   <span style={{ color: '#6b7280', fontSize: '0.78rem', marginLeft: '4px' }}>complaints</span>
                 </td>
-                <td style={{ color: '#a78bfa', fontWeight: '600' }}>
+                <td style={{ color: '#7c3aed', fontWeight: '600' }}>
                   {formatDuration(row.avgHours)}
                 </td>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 6, overflow: 'hidden', minWidth: 60 }}>
+                    <div style={{ flex: 1, height: 6, background: '#f3f4f6', borderRadius: 6, overflow: 'hidden', minWidth: 60 }}>
                       <div style={{ height: '100%', borderRadius: 6, background: getSLAColor(row.sla), width: `${row.sla}%`, transition: 'width 1s ease' }} />
                     </div>
                     <span style={{ fontWeight: '700', color: getSLAColor(row.sla), fontSize: '0.82rem', whiteSpace: 'nowrap' }}>
@@ -74,7 +74,7 @@ export default function DepartmentRankingTable() {
                 <td>
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.78rem', fontWeight: '700',
-                    color: row.trend === 'up' ? '#34d399' : '#f87171',
+                    color: row.trend === 'up' ? '#059669' : '#dc2626',
                   }}>
                     <i className={`bi bi-arrow-${row.trend === 'up' ? 'up' : 'down'}-right`} />
                     {row.trend === 'up' ? 'Improving' : 'Declining'}

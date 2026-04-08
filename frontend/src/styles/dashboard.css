@@ -1,28 +1,28 @@
-/* ─── Analytics Dashboard — Dark Theme Styles ─────────────────────────────── */
+/* ─── Analytics Dashboard — Light Theme (matches ICMS app) ───────────────── */
 
 .analytics-page {
-  background: #0a0e1a;
+  background: #f8fafc;
   min-height: 100vh;
-  color: #f9fafb;
+  color: #111827;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Surface cards */
 .an-card {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .an-card:hover {
-  border-color: rgba(96, 165, 250, 0.3);
-  box-shadow: 0 0 24px rgba(96, 165, 250, 0.08);
+  border-color: rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.08);
 }
 
 .an-card-header {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid #f3f4f6;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +31,7 @@
 .an-card-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #f9fafb;
+  color: #111827;
   margin: 0;
   display: flex;
   align-items: center;
@@ -44,8 +44,8 @@
 
 /* Stat cards */
 .an-stat-card {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 1.5rem;
   display: flex;
@@ -58,7 +58,8 @@
 
 .an-stat-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.1);
+  border-color: rgba(79, 70, 229, 0.2);
 }
 
 .an-stat-icon {
@@ -75,7 +76,7 @@
 .an-stat-value {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #f9fafb;
+  color: #111827;
   line-height: 1;
   margin-bottom: 4px;
   letter-spacing: -1px;
@@ -83,7 +84,7 @@
 
 .an-stat-label {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: #6b7280;
   font-weight: 500;
 }
 
@@ -93,8 +94,8 @@
   gap: 3px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #34d399;
-  background: rgba(52, 211, 153, 0.12);
+  color: #059669;
+  background: rgba(5, 150, 105, 0.1);
   border-radius: 20px;
   padding: 2px 8px;
   margin-top: 6px;
@@ -106,8 +107,8 @@
   gap: 3px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.12);
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
   border-radius: 20px;
   padding: 2px 8px;
   margin-top: 6px;
@@ -141,25 +142,25 @@
 }
 
 .an-filter-input {
-  background: #1f2937;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
   border-radius: 10px;
-  color: #f9fafb;
+  color: #374151;
   padding: 0.6rem 1rem;
   font-size: 0.875rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   min-width: 160px;
 }
 
 .an-filter-input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
 }
 
 .an-filter-input option {
-  background: #1f2937;
-  color: #f9fafb;
+  background: #ffffff;
+  color: #374151;
 }
 
 /* Export button */
@@ -167,7 +168,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   border: none;
   border-radius: 10px;
   color: #fff;
@@ -177,6 +178,7 @@
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
 .an-btn-export:hover {
@@ -187,7 +189,7 @@
 /* SLA progress bar */
 .an-progress-track {
   height: 8px;
-  background: rgba(255, 255, 255, 0.08);
+  background: #f3f4f6;
   border-radius: 8px;
   overflow: hidden;
   margin-top: 8px;
@@ -196,7 +198,7 @@
 .an-progress-fill {
   height: 100%;
   border-radius: 8px;
-  background: linear-gradient(90deg, #34d399, #22d3ee);
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -215,26 +217,26 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1.5px solid #e5e7eb;
 }
 
 .an-table tbody tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid #f3f4f6;
   transition: background 0.15s;
 }
 
 .an-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(79, 70, 229, 0.03);
 }
 
 .an-table tbody td {
   padding: 0.95rem 1rem;
-  color: #e5e7eb;
+  color: #374151;
 }
 
 /* Loading skeleton */
 .an-skeleton {
-  background: linear-gradient(90deg, #1f2937 25%, #273549 50%, #1f2937 75%);
+  background: linear-gradient(90deg, #f3f4f6 25%, #e9ecef 50%, #f3f4f6 75%);
   background-size: 200% 100%;
   animation: an-shimmer 1.5s infinite;
   border-radius: 8px;
@@ -252,9 +254,9 @@
 
 /* Insight badges */
 .an-badge-red {
-  background: rgba(248, 113, 113, 0.15);
-  color: #fca5a5;
-  border: 1px solid rgba(248, 113, 113, 0.2);
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: 20px;
   padding: 3px 10px;
   font-size: 0.75rem;
@@ -262,9 +264,9 @@
 }
 
 .an-badge-yellow {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fcd34d;
-  border: 1px solid rgba(251, 191, 36, 0.2);
+  background: rgba(217, 119, 6, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.2);
   border-radius: 20px;
   padding: 3px 10px;
   font-size: 0.75rem;
@@ -272,9 +274,9 @@
 }
 
 .an-badge-green {
-  background: rgba(52, 211, 153, 0.15);
-  color: #6ee7b7;
-  border: 1px solid rgba(52, 211, 153, 0.2);
+  background: rgba(5, 150, 105, 0.08);
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.2);
   border-radius: 20px;
   padding: 3px 10px;
   font-size: 0.75rem;
@@ -289,12 +291,12 @@
   padding: 10px 14px;
   font-size: 0.82rem;
   color: #f9fafb;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .an-tooltip-label {
   font-weight: 700;
-  color: #60a5fa;
+  color: #a5b4fc;
   margin-bottom: 4px;
 }
 

@@ -18,7 +18,7 @@ export default function ChartContainer({
     <div className="an-card" style={{ overflow: 'hidden', ...style }}>
       <div className="an-card-header">
         <h6 className="an-card-title">
-          {icon && <i className={`bi ${icon}`} style={{ color: '#60a5fa' }} />}
+          {icon && <i className={`bi ${icon}`} style={{ color: '#4f46e5' }} />}
           {title}
         </h6>
         {action && <div>{action}</div>}

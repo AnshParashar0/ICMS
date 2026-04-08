@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { THEME } from '../utils/constants'
-import { workersAPI } from '../backend-api'
-import DepartmentStats from '../components/workers/DepartmentStats'
-import WorkerForm from '../components/workers/WorkerForm'
-import WorkersTable from '../components/workers/WorkersTable'
+import { THEME } from '../../utils/constants'
+import { workersAPI } from '../../backend-api'
+import DepartmentStats from './DepartmentStats'
+import WorkerForm from './WorkerForm'
+import WorkersTable from './WorkersTable'
 
 const BLANK_FORM = { name: '', department: 'Electrical', phone: '', email: '', status: 'AVAILABLE' }
 

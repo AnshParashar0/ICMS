@@ -32,7 +32,7 @@ export default function ComplaintsBarChart({ loading, error, onRetry }) {
       <div className="an-card-body">
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={complaintsByLocation} barGap={4} barCategoryGap="30%">
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
             <XAxis
               dataKey="ward"
               tick={{ fill: '#9ca3af', fontSize: 11 }}
@@ -44,10 +44,10 @@ export default function ComplaintsBarChart({ loading, error, onRetry }) {
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(79,70,229,0.04)' }} />
             <Legend wrapperStyle={{ color: '#9ca3af', fontSize: '0.78rem', paddingTop: '8px' }} />
-            <Bar dataKey="complaints" name="Total" fill="#60a5fa" radius={[5,5,0,0]} animationDuration={900} />
-            <Bar dataKey="resolved"   name="Resolved" fill="#34d399" radius={[5,5,0,0]} animationDuration={1100} />
+            <Bar dataKey="complaints" name="Total" fill="#6366f1" radius={[5,5,0,0]} animationDuration={900} />
+            <Bar dataKey="resolved"   name="Resolved" fill="#059669" radius={[5,5,0,0]} animationDuration={1100} />
           </BarChart>
         </ResponsiveContainer>
       </div>

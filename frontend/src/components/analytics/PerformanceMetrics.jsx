@@ -33,14 +33,14 @@ function SLACard({ value }) {
       style={{ padding: '1.5rem', gridColumn: 'span 1' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-        <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(34,211,238,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <i className="bi bi-shield-check" style={{ color: '#22d3ee', fontSize: '1.1rem' }} />
+        <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(79,70,229,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <i className="bi bi-shield-check" style={{ color: '#4f46e5', fontSize: '1.1rem' }} />
         </div>
         <div style={{ fontSize: '0.82rem', color: '#9ca3af', fontWeight: '500' }}>SLA Compliance</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '8px' }}>
-        <div style={{ fontSize: '2rem', fontWeight: '800', color: '#22d3ee', lineHeight: 1 }}>{value}%</div>
-        <div style={{ fontSize: '0.78rem', color: value >= 80 ? '#34d399' : '#fbbf24', fontWeight: '600' }}>
+        <div style={{ fontSize: '2rem', fontWeight: '800', color: '#4f46e5', lineHeight: 1 }}>{value}%</div>
+        <div style={{ fontSize: '0.78rem', color: value >= 80 ? '#059669' : '#d97706', fontWeight: '600' }}>
           {value >= 90 ? 'Excellent' : value >= 80 ? 'Good' : value >= 70 ? 'Fair' : 'Needs Improvement'}
         </div>
       </div>
@@ -64,8 +64,8 @@ export default function PerformanceMetrics() {
   return (
     <div>
       <div style={{ marginBottom: '1rem' }}>
-        <h3 style={{ color: '#f9fafb', fontWeight: '800', fontSize: '1.05rem', margin: 0 }}>
-          <i className="bi bi-lightning-charge" style={{ color: '#fbbf24', marginRight: '8px' }} />
+        <h3 style={{ color: '#111827', fontWeight: '800', fontSize: '1.05rem', margin: 0 }}>
+          <i className="bi bi-lightning-charge" style={{ color: '#d97706', marginRight: '8px' }} />
           Performance Analytics
         </h3>
       </div>

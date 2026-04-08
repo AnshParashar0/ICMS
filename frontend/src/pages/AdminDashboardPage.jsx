@@ -9,7 +9,7 @@ import Sidebar from '../components/common/Sidebar'
 import OverviewSection from '../components/overview/OverviewSection'
 import ComplaintsTable from '../components/complaints/ComplaintsTable'
 import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard'
-import WorkersSection from './WorkersSection'
+import WorkersSection from '../components/workers/WorkersSection'
 
 export default function AdminDashboardPage() {
   const [currentUser, setCurrentUser] = useState(null)
@@ -66,7 +66,7 @@ export default function AdminDashboardPage() {
 
   // ── Render ──────────────────────────────────────────────────
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: active === 'analytics' ? '#0a0e1a' : '#f8fafc' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
 
       <Sidebar
         active={active}

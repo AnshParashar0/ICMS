@@ -83,6 +83,8 @@ export const authAPI = {
     return response;
   },
   async register(userData) { return await api.post("/auth/register", userData); },
+  async verifyOtp(email, otp) { return await api.post("/auth/verify-otp", { email, otp }); },
+  async resendOtp(email) { return await api.post("/auth/resend-otp", { email }); },
   async getProfile(email) { return await api.get("/auth/profile", { email }); },
   logout() { api.removeToken(); },
 };
