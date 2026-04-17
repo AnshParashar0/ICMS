@@ -2,7 +2,7 @@
 nixPkgs = ["jdk17_headless", "maven"]
 
 [phases.build]
-cmds = ["chmod +x mvnw", "./mvnw clean package -DskipTests"]
+cmds = ["mvn clean package -DskipTests"]
 
 [start]
 cmd = "java -jar target/icms-backend-1.0.0.jar"
