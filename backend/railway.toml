@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+buildCommand = "chmod +x mvnw && ./mvnw clean package -DskipTests"
+
+[deploy]
+startCommand = "java -jar target/icms-backend-1.0.0.jar"
+healthcheckPath = "/api/auth/ping"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
