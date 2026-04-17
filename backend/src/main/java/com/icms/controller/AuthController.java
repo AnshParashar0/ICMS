@@ -35,6 +35,12 @@ public class AuthController {
     private final PendingUserService pendingUserService;
     private final EmailService emailService;
 
+    // ── HEALTH CHECK — used by Railway health check ───────────────────────
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping() {
+        return ResponseEntity.ok(Map.of("status", "ok", "service", "ICMS Backend"));
+    }
+
     // ── REGISTER — stores pending data and sends OTP ──────────────────────
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
