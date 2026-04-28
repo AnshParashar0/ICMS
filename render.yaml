@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: icms-backend
+    root_dir: backend
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/icms-backend-1.0.0.jar
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: MYSQL_PUBLIC_URL
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://your-frontend-url.vercel.app
