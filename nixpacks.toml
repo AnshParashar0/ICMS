@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["jdk17_headless", "maven"]
+
+[phases.build]
+cmds = ["cd backend && mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -jar backend/target/icms-backend-1.0.0.jar"
