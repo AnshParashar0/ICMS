@@ -19,6 +19,7 @@ public class EmailService {
             }
 
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("onboarding@resend.dev");
             message.setTo(toEmail);
             message.setSubject("ICMS - Complaint Status Updated: " + complaintId);
             message.setText(buildStatusEmailBody(complaintId, newStatus));
@@ -39,6 +40,7 @@ public class EmailService {
             }
 
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("onboarding@resend.dev");
             message.setTo(toEmail);
             message.setSubject("Welcome to ICMS - Infrastructure Complaint Management System");
             message.setText(buildWelcomeEmailBody(name));
@@ -81,6 +83,7 @@ public class EmailService {
             }
 
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("onboarding@resend.dev");
             message.setTo(toEmail);
             message.setSubject("ICMS - Your Email Verification OTP");
             message.setText(buildOtpEmailBody(name, otp));
@@ -125,7 +128,7 @@ public class EmailService {
                 - Track the status of your complaints
                 - Get notified when your complaint is updated
 
-                Login at: http://localhost:5173
+                Login at: https://icms-1.onrender.com
 
                 Regards,
                 ICMS Team
