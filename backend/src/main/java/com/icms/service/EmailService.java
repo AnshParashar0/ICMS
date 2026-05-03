@@ -3,36 +3,82 @@ package com.icms.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.Base64;
 import java.util.Map;
 
 @Service
 public class EmailService {
 
-    @Value("${resend.api.key}")
-    private String resendApiKey;
+    @Value("${gmail.client.id}")
+    private String clientId;
+
+    @Value("${gmail.client.secret}")
+    private String clientSecret;
+
+    @Value("${gmail.refresh.token}")
+    private String refreshToken;
+
+    @Value("${gmail.from.email}")
+    private String fromEmail;
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String RESEND_API_URL = "https://api.resend.com/emails";
-    private static final String FROM_EMAIL = "onboarding@resend.dev";
 
+    // ── Get fresh access token using refresh token ─────────────────────────
+    private String getAccessToken() {
+        String tokenUrl = "https://oauth2.googleapis.com/token";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", clientId);
+        body.add("client_secret", clientSecret);
+        body.add("refresh_token", refreshToken);
+        body.add("grant_type", "refresh_token");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return (String) response.getBody().get("access_token");
+        }
+        throw new RuntimeException("Failed to get access token");
+    }
+
+    // ── Send email via Gmail API ───────────────────────────────────────────
     private void sendEmail(String toEmail, String subject, String body) {
         try {
+            String accessToken = getAccessToken();
+
+            // Build RFC 2822 email format
+            String emailContent = "From: " + fromEmail + "\r\n" +
+                    "To: " + toEmail + "\r\n" +
+                    "Subject: " + subject + "\r\n" +
+                    "Content-Type: text/plain; charset=utf-8\r\n" +
+                    "\r\n" +
+                    body;
+
+            // Base64 encode
+            String encodedEmail = Base64.getUrlEncoder()
+                    .encodeToString(emailContent.getBytes());
+
+            // Call Gmail API
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(resendApiKey);
+            headers.setBearerAuth(accessToken);
 
-            Map<String, Object> payload = Map.of(
-                "from", FROM_EMAIL,
-                "to", List.of(toEmail),
-                "subject", subject,
-                "text", body
+            Map<String, String> payload = Map.of("raw", encodedEmail);
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+                    request,
+                    String.class
             );
-
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(RESEND_API_URL, request, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 System.out.println("Email sent successfully to: " + toEmail);
@@ -44,6 +90,8 @@ public class EmailService {
             System.err.println("Email sending failed (non-critical): " + e.getMessage());
         }
     }
+
+    // ── Public methods ─────────────────────────────────────────────────────
 
     public void sendOtpEmail(String toEmail, String name, String otp) {
         if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
@@ -68,6 +116,8 @@ public class EmailService {
         }
         sendEmail(toEmail, "ICMS - Complaint Status Updated: " + complaintId, buildStatusEmailBody(complaintId, newStatus));
     }
+
+    // ── Email body builders ────────────────────────────────────────────────
 
     private String buildOtpEmailBody(String name, String otp) {
         return """
