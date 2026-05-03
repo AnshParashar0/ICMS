@@ -1,99 +1,72 @@
 package com.icms.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
-    public void sendStatusUpdateEmail(String toEmail, String complaintId, String newStatus) {
+    private final RestTemplate restTemplate = new RestTemplate();
+    private static final String RESEND_API_URL = "https://api.resend.com/emails";
+    private static final String FROM_EMAIL = "onboarding@resend.dev";
+
+    private void sendEmail(String toEmail, String subject, String body) {
         try {
-            if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
-                System.out.println("Skipping email for: " + toEmail);
-                return;
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(resendApiKey);
+
+            Map<String, Object> payload = Map.of(
+                "from", FROM_EMAIL,
+                "to", List.of(toEmail),
+                "subject", subject,
+                "text", body
+            );
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(RESEND_API_URL, request, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Email sent successfully to: " + toEmail);
+            } else {
+                System.err.println("Email sending failed: " + response.getBody());
             }
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("onboarding@resend.dev");
-            message.setTo(toEmail);
-            message.setSubject("ICMS - Complaint Status Updated: " + complaintId);
-            message.setText(buildStatusEmailBody(complaintId, newStatus));
-
-            mailSender.send(message);
-            System.out.println("Status email sent to: " + toEmail);
 
         } catch (Exception e) {
             System.err.println("Email sending failed (non-critical): " + e.getMessage());
         }
     }
 
-    public void sendWelcomeEmail(String toEmail, String name) {
-        try {
-            if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
-                System.out.println("Skipping welcome email for: " + toEmail);
-                return;
-            }
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("onboarding@resend.dev");
-            message.setTo(toEmail);
-            message.setSubject("Welcome to ICMS - Infrastructure Complaint Management System");
-            message.setText(buildWelcomeEmailBody(name));
-
-            mailSender.send(message);
-            System.out.println("Welcome email sent to: " + toEmail);
-
-        } catch (Exception e) {
-            System.err.println("Welcome email failed (non-critical): " + e.getMessage());
-        }
-    }
-
-    private String buildStatusEmailBody(String complaintId, String status) {
-        String statusText = switch (status) {
-            case "IN_PROGRESS" -> "In Progress - Our team is working on it";
-            case "RESOLVED" -> "Resolved - Your complaint has been resolved";
-            default -> "Pending - Your complaint is awaiting review";
-        };
-
-        return """
-                Dear Student,
-
-                Your complaint status has been updated.
-
-                Complaint ID: %s
-                New Status: %s
-
-                You can login to ICMS to view more details.
-
-                Regards,
-                ICMS Team
-                """.formatted(complaintId, statusText);
-    }
-
     public void sendOtpEmail(String toEmail, String name, String otp) {
-        try {
-            if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
-                System.out.println("Skipping OTP email for: " + toEmail);
-                return;
-            }
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("onboarding@resend.dev");
-            message.setTo(toEmail);
-            message.setSubject("ICMS - Your Email Verification OTP");
-            message.setText(buildOtpEmailBody(name, otp));
-
-            mailSender.send(message);
-            System.out.println("OTP email sent to: " + toEmail);
-
-        } catch (Exception e) {
-            System.err.println("OTP email sending failed (non-critical): " + e.getMessage());
+        if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
+            System.out.println("Skipping OTP email for: " + toEmail);
+            return;
         }
+        sendEmail(toEmail, "ICMS - Your Email Verification OTP", buildOtpEmailBody(name, otp));
+    }
+
+    public void sendWelcomeEmail(String toEmail, String name) {
+        if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
+            System.out.println("Skipping welcome email for: " + toEmail);
+            return;
+        }
+        sendEmail(toEmail, "Welcome to ICMS - Infrastructure Complaint Management System", buildWelcomeEmailBody(name));
+    }
+
+    public void sendStatusUpdateEmail(String toEmail, String complaintId, String newStatus) {
+        if (toEmail == null || !toEmail.contains("@") || toEmail.endsWith("@test.com")) {
+            System.out.println("Skipping status email for: " + toEmail);
+            return;
+        }
+        sendEmail(toEmail, "ICMS - Complaint Status Updated: " + complaintId, buildStatusEmailBody(complaintId, newStatus));
     }
 
     private String buildOtpEmailBody(String name, String otp) {
@@ -133,5 +106,27 @@ public class EmailService {
                 Regards,
                 ICMS Team
                 """.formatted(name);
+    }
+
+    private String buildStatusEmailBody(String complaintId, String status) {
+        String statusText = switch (status) {
+            case "IN_PROGRESS" -> "In Progress - Our team is working on it";
+            case "RESOLVED" -> "Resolved - Your complaint has been resolved";
+            default -> "Pending - Your complaint is awaiting review";
+        };
+
+        return """
+                Dear Student,
+
+                Your complaint status has been updated.
+
+                Complaint ID: %s
+                New Status: %s
+
+                You can login to ICMS to view more details.
+
+                Regards,
+                ICMS Team
+                """.formatted(complaintId, statusText);
     }
 }
