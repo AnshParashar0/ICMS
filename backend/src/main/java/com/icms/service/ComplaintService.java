@@ -1,15 +1,12 @@
 package com.icms.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.icms.model.Complaint;
 import com.icms.model.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,9 +24,7 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final UserService userService;
     private final EmailService emailService;
-
-    @Value("${file.upload.dir}")
-    private String uploadDir;
+    private final Cloudinary cloudinary;
 
     public @NonNull Complaint createComplaint(
             String category, String location, String description,
@@ -40,10 +35,10 @@ public class ComplaintService {
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // ✅ Save image if provided
+        // ✅ Upload image to Cloudinary if provided
         String imagePath = null;
         if (image != null && !image.isEmpty()) {
-            imagePath = saveImage(image);
+            imagePath = uploadToCloudinary(image);
         }
 
         Complaint complaint = Complaint.builder()
@@ -62,20 +57,19 @@ public class ComplaintService {
         return complaintRepository.save(complaint);
     }
 
-    private String saveImage(MultipartFile file) {
+    private String uploadToCloudinary(MultipartFile file) {
         try {
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(file.getInputStream(), filePath);
-
-            return uploadDir + "/" + fileName;
-        } catch (IOException e) {
-            System.err.println("Image save failed: " + e.getMessage());
+            Map uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                    "folder", "icms/complaints",
+                    "resource_type", "auto"
+                )
+            );
+            // Returns permanent Cloudinary URL
+            return (String) uploadResult.get("secure_url");
+        } catch (Exception e) {
+            System.err.println("Cloudinary upload failed: " + e.getMessage());
             return null;
         }
     }
