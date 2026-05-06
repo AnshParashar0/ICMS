@@ -299,7 +299,7 @@ function RegisterPage() {
 
   // OTP verified → go to login
   const handleOtpSuccess = () => {
-    setTimeout(() => navigate('/'), 500)
+    setTimeout(() => navigate('/login'), 500)
   }
 
   // Back from OTP → restore form (email stays pre-filled so they can correct it)
@@ -567,7 +567,7 @@ function RegisterPage() {
           {/* Login link */}
           <p style={{ marginTop: '1.5rem', color: '#6b7280', fontSize: '0.975rem' }}>
             Already have an account?{' '}
-            <Link to="/" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none' }}>Login here</Link>
+            <Link to="/login" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none' }}>Login here</Link>
           </p>
         </div>
 

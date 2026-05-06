@@ -41,13 +41,13 @@ function RaiseComplaintPage() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser')
-    if (!storedUser) { navigate('/'); return }
+    if (!storedUser) { navigate('/login'); return }
     const user = JSON.parse(storedUser)
-    if (user.type !== 'student') { navigate('/'); return }
+    if (user.type !== 'student') { navigate('/login'); return }
     setCurrentUser(user)
   }, [navigate])
 
-  const logout = () => { localStorage.removeItem('currentUser'); navigate('/') }
+  const logout = () => { localStorage.removeItem('currentUser'); navigate('/login') }
 
   const handleImageFile = (file) => {
     setImageError('')

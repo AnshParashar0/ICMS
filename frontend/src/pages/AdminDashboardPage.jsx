@@ -23,9 +23,9 @@ export default function AdminDashboardPage() {
   // ── Auth guard ──────────────────────────────────────────────
   useEffect(() => {
     const stored = localStorage.getItem('currentUser')
-    if (!stored) { navigate('/'); return }
+    if (!stored) { navigate('/login'); return }
     const user = JSON.parse(stored)
-    if (user.type !== 'admin') { navigate('/'); return }
+    if (user.type !== 'admin') { navigate('/login'); return }
     setCurrentUser(user)
     loadAll()
   }, [navigate])
@@ -62,7 +62,7 @@ export default function AdminDashboardPage() {
   }
 
   // ── Logout ──────────────────────────────────────────────────
-  const logout = () => { localStorage.removeItem('currentUser'); navigate('/') }
+  const logout = () => { localStorage.removeItem('currentUser'); navigate('/login') }
 
   // ── Render ──────────────────────────────────────────────────
   return (
