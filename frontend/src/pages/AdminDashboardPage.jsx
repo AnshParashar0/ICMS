@@ -6,6 +6,7 @@ import { complaintsAPI, workersAPI } from '../backend-api'
 import { STATUS_CFG } from '../utils/constants'
 
 import Sidebar from '../components/common/Sidebar'
+import '../styles/dashboard.css'
 import OverviewSection from '../components/overview/OverviewSection'
 import ComplaintsTable from '../components/complaints/ComplaintsTable'
 import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard'
@@ -18,6 +19,7 @@ export default function AdminDashboardPage() {
   const [loading,     setLoading]     = useState(true)
   const [updatingId,  setUpdatingId]  = useState(null)
   const [active,      setActive]      = useState('overview')
+  const [mobileOpen,  setMobileOpen]  = useState(false)
   const navigate = useNavigate()
 
   // ── Auth guard ──────────────────────────────────────────────
@@ -66,16 +68,18 @@ export default function AdminDashboardPage() {
 
   // ── Render ──────────────────────────────────────────────────
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <div className="admin-dashboard-layout">
 
       <Sidebar
         active={active}
         setActive={setActive}
         currentUser={currentUser}
         onLogout={logout}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
       />
 
-      <main style={{ flex: 1, overflow: 'auto', minWidth: 0 }}>
+      <main className="admin-main-content">
         {/* Overview — light theme */}
         {active === 'overview' && (
           <div style={{ maxWidth: '1900px', margin: '0 auto', padding: '2rem 1.5rem', boxSizing: 'border-box' }}>

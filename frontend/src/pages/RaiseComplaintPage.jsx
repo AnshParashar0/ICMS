@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { complaintsAPI } from '../backend-api'
 import { toast } from 'react-toastify'
 import logo from '../assets/vecteezy_modern-real-estate-and-construction-logo_19897563.png'
+import '../styles/dashboard.css'
 
 const GRADIENT = 'linear-gradient(135deg, #1e1b4b 0%, #4f46e5 60%, #7c3aed 100%)'
 const PRIMARY = '#4f46e5'
@@ -37,6 +38,7 @@ function RaiseComplaintPage() {
   const [dragOver, setDragOver] = useState(false)
   const [loading, setLoading] = useState(false)
   const [successId, setSuccessId] = useState('')
+  const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -103,10 +105,17 @@ function RaiseComplaintPage() {
   const labelStyle = { display: 'block', fontWeight: '600', color: '#374151', fontSize: '0.9rem', marginBottom: '0.45rem' }
   const cardStyle = { background: '#fff', borderRadius: '14px', padding: '1.5rem 1.75rem', marginBottom: '1.1rem', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }
 
+  const closeMobile = () => { if (mobileOpen) setMobileOpen(false) }
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
-      {/* Left Sidebar */}
-      <nav style={{ width: '230px', minWidth: '230px', background: GRADIENT, display: 'flex', flexDirection: 'column', padding: '1.5rem 1rem', boxShadow: '4px 0 20px rgba(79,70,229,0.15)', position: 'sticky', top: 0, height: '100vh' }}>
+    <div className="raise-complaint-layout">
+      {/* Hamburger */}
+      <button className="sidebar-hamburger" onClick={() => setMobileOpen(p => !p)} aria-label="Toggle menu">
+        <span className={mobileOpen ? 'active' : ''} /><span className={mobileOpen ? 'active' : ''} /><span className={mobileOpen ? 'active' : ''} />
+      </button>
+      {mobileOpen && <div className="sidebar-backdrop" onClick={() => setMobileOpen(false)} />}
+
+      <nav className={`raise-complaint-sidebar ${mobileOpen ? 'sidebar-open' : ''}`} style={{ background: GRADIENT }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem' }}>
           <img src={logo} alt="ICMS" style={{ width: '38px', height: '38px', objectFit: 'contain', mixBlendMode: 'screen' }} />
           <div>
@@ -120,7 +129,7 @@ function RaiseComplaintPage() {
             { to: '/student-dashboard', icon: 'bi-speedometer2', label: 'Dashboard' },
             { to: '/student-dashboard', icon: 'bi-list-task', label: 'My Complaints' },
           ].map(n => (
-            <Link key={n.label} to={n.to} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.7rem 1rem', borderRadius: '10px', marginBottom: '4px', color: 'rgba(255,255,255,0.65)', fontWeight: '500', fontSize: '0.9rem', textDecoration: 'none', transition: 'background 0.15s' }}
+            <Link key={n.label} to={n.to} onClick={closeMobile} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.7rem 1rem', borderRadius: '10px', marginBottom: '4px', color: 'rgba(255,255,255,0.65)', fontWeight: '500', fontSize: '0.9rem', textDecoration: 'none', transition: 'background 0.15s' }}
               onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
               onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
               <i className={`bi ${n.icon}`} style={{ fontSize: '1rem' }} />{n.label}
@@ -146,8 +155,7 @@ function RaiseComplaintPage() {
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main style={{ flex: 1, overflow: 'auto', minWidth: 0 }}>
+      <main className="raise-complaint-main">
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '2rem 1.5rem' }}>
           <div style={{ marginBottom: '1.75rem' }}>
             <h1 style={{ fontWeight: '800', fontSize: '1.7rem', color: '#111827', marginBottom: '0.3rem', letterSpacing: '-0.5px' }}>Raise a New Complaint</h1>
@@ -187,7 +195,7 @@ function RaiseComplaintPage() {
 
             {/* Location + Contact */}
             <div style={cardStyle}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.1rem' }}>
+              <div className="raise-complaint-location-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.1rem' }}>
                 <div>
                   <label style={labelStyle}><i className="bi bi-geo-alt me-2" style={{ color: PRIMARY }} />Location</label>
                   <input type="text" placeholder="e.g., Room 101, Building A" value={location} onChange={e => setLocation(e.target.value)} required style={inputStyle} />
@@ -261,7 +269,7 @@ function RaiseComplaintPage() {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '0.5rem' }}>
+            <div className="raise-complaint-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '0.5rem' }}>
               <Link to="/student-dashboard" style={{ background: '#fff', border: '1.5px solid #e5e7eb', color: '#374151', borderRadius: '10px', padding: '0.8rem 1.75rem', fontWeight: '600', fontSize: '0.95rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>Cancel</Link>
               <button type="submit" disabled={loading || !category || !priority}
                 style={{ background: (!category || !priority || loading) ? '#e5e7eb' : GRADIENT, color: (!category || !priority || loading) ? '#9ca3af' : '#fff', border: 'none', borderRadius: '10px', padding: '0.8rem 2.25rem', fontSize: '0.95rem', fontWeight: '700', cursor: (!category || !priority || loading) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s', boxShadow: (!category || !priority || loading) ? 'none' : '0 4px 14px rgba(79,70,229,0.35)' }}>

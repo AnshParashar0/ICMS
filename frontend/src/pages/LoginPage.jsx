@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { authAPI } from '../backend-api'
 import { toast } from 'react-toastify'
 import logo from '../assets/vecteezy_modern-real-estate-and-construction-logo_19897563.png'
+import '../styles/dashboard.css'
 
 function LoginPage() {
   const [email, setEmail] = useState('')
@@ -99,9 +100,9 @@ function LoginPage() {
       </div>
 
       {/* Right Panel */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#ffffff', overflowY: 'auto', minWidth: 0 }}>
+      <div className="login-right-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#ffffff', overflowY: 'auto', minWidth: 0 }}>
         {/* Centered form */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2.5rem 2rem' }}>
+        <div className="login-form-container" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2.5rem 2rem' }}>
           <div style={{ width: '100%', maxWidth: '600px', minHeight: '15vh', overflowY: 'auto' }}>
 
             {/* Mobile Logo */}
@@ -112,7 +113,7 @@ function LoginPage() {
               </div>
             </div>
 
-            <h1 style={{ fontSize: '2.2rem', fontWeight: '800', color: '#0f0e1a', marginBottom: '0.4rem', letterSpacing: '-1px', lineHeight: 1.15 }}>Welcome back</h1>
+            <h1 className="login-heading" style={{ fontSize: '2.2rem', fontWeight: '800', color: '#0f0e1a', marginBottom: '0.4rem', letterSpacing: '-1px', lineHeight: 1.15 }}>Welcome back</h1>
             <p style={{ color: '#6b7280', fontSize: '1rem', marginBottom: '2rem', lineHeight: 1.5 }}>Sign in to your ICMS account to continue</p>
 
             {formError && (

@@ -24,25 +24,10 @@ export default function OverviewSection({ complaints, workers, setActive }) {
         <p style={{ color: '#6b7280', margin: '0.3rem 0 0', fontSize: '0.95rem' }}>Welcome back! Here's what's happening today.</p>
       </div>
 
-      {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
-        {cards.map(s => (
-          <div key={s.label} style={{ background: '#fff', borderRadius: '14px', padding: '1.5rem', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '1rem', border: '1px solid #f1f5f9' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <i className={`bi ${s.icon}`} style={{ fontSize: '1.4rem', color: s.color }} />
-            </div>
-            <div>
-              <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: '500' }}>{s.label}</div>
-              <div style={{ fontSize: '2rem', fontWeight: '800', color: '#111827', lineHeight: 1 }}>{s.value}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Recent complaints + workers by dept */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+      {/* Recent complaints — shown FIRST on mobile via CSS order */}
+      <div className="overview-recent-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '2rem' }}>
         {/* Recent complaints */}
-        <div style={{ background: '#fff', borderRadius: '14px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+        <div className="overview-recent-card" style={{ background: '#fff', borderRadius: '14px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
           <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f9fafb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h6 style={{ fontWeight: '700', margin: 0, color: '#111827', fontSize: '0.95rem' }}>
               <i className="bi bi-clock-history me-2" style={{ color: THEME.primary }} />Recent Complaints
@@ -68,7 +53,7 @@ export default function OverviewSection({ complaints, workers, setActive }) {
         </div>
 
         {/* Workers by dept */}
-        <div style={{ background: '#fff', borderRadius: '14px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+        <div className="overview-workers-card" style={{ background: '#fff', borderRadius: '14px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
           <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f9fafb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h6 style={{ fontWeight: '700', margin: 0, color: '#111827', fontSize: '0.95rem' }}>
               <i className="bi bi-people me-2" style={{ color: THEME.primary }} />Workers by Department
@@ -94,6 +79,21 @@ export default function OverviewSection({ complaints, workers, setActive }) {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Stat cards — shown AFTER complaints on mobile via CSS order */}
+      <div className="overview-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+        {cards.map(s => (
+          <div key={s.label} className="overview-stat-card" style={{ background: '#fff', borderRadius: '14px', padding: '1.5rem', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '1rem', border: '1px solid #f1f5f9' }}>
+            <div className="overview-stat-icon" style={{ width: '52px', height: '52px', borderRadius: '12px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <i className={`bi ${s.icon}`} style={{ fontSize: '1.4rem', color: s.color }} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: '500' }}>{s.label}</div>
+              <div className="overview-stat-value" style={{ fontSize: '2rem', fontWeight: '800', color: '#111827', lineHeight: 1 }}>{s.value}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

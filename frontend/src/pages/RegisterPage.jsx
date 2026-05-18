@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { authAPI } from '../backend-api'
 import { toast } from 'react-toastify'
 import logo from '../assets/vecteezy_modern-real-estate-and-construction-logo_19897563.png'
+import '../styles/dashboard.css'
 
 // ─── OTP Verification Step ──────────────────────────────────────────────────
 function OtpStep({ email, onBack, onSuccess }) {
@@ -429,7 +430,7 @@ function RegisterPage() {
       {/* Right Side */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#ffffff', overflowY: 'auto', minWidth: 0 }}>
         {/* Main content area */}
-        <div style={{ flex: 1, padding: '2.5rem 3.5rem 2rem' }}>
+        <div className="register-right-content" style={{ flex: 1, padding: '2.5rem 3.5rem 2rem' }}>
 
           {/* Mobile Logo */}
           <div className="d-lg-none mb-4">
@@ -440,7 +441,7 @@ function RegisterPage() {
           </div>
 
           {/* Header */}
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: '0.4rem', letterSpacing: '-1px', lineHeight: 1.15 }}>
+          <h1 className="register-heading" style={{ fontSize: '2.5rem', fontWeight: '800', color: '#111827', marginBottom: '0.4rem', letterSpacing: '-1px', lineHeight: 1.15 }}>
             Create your account!
           </h1>
           <p style={{ color: '#6b7280', fontSize: '1.15rem', marginBottom: '2rem', lineHeight: 1.5 }}>
@@ -452,7 +453,7 @@ function RegisterPage() {
             <p style={{ fontWeight: '700', color: '#1f2937', fontSize: '1rem', marginBottom: '0.9rem' }}>
               Search for your institution or department to get started.
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div className="register-search-layout" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
               <div style={{ flex: 1, position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', pointerEvents: 'none' }}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -500,7 +501,7 @@ function RegisterPage() {
 
           <form onSubmit={handleSubmit} noValidate>
             {/* Row 1: Full Name + Contact */}
-            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.85rem' }}>
+            <div className="register-form-row" style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.85rem' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Full Name</label>
                 <input type="text" id="fullName" placeholder="Enter your full name" value={fullName} onChange={(e) => { setFullName(e.target.value); setNameError('') }} style={inputStyle(nameError)} />
@@ -522,7 +523,7 @@ function RegisterPage() {
             </div>
 
             {/* Row 3: Password + Confirm */}
-            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            <div className="register-form-row" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Password</label>
                 <div style={{ position: 'relative' }}>
@@ -572,7 +573,7 @@ function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <div style={{ borderTop: '1px solid #f3f4f6', padding: '1rem 3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div className="register-footer" style={{ borderTop: '1px solid #f3f4f6', padding: '1rem 3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <img src={logo} alt="ICMS Logo" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.12))' }} />
