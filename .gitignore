@@ -5,3 +5,5 @@ backend/target/
 .env
 backend/package-lock.json
 backend_java_backup/target/
+
+# admin@test.com,  admin123
