@@ -2,3 +2,6 @@
 backend/uploads/
 node_modules/
 backend/target/
+.env
+backend/package-lock.json
+backend_java_backup/target/

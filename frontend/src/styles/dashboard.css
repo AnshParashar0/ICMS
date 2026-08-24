@@ -324,3 +324,445 @@
     padding: 1rem;
   }
 }
+
+/* ===================================================================
+   Admin Dashboard Layout + Responsive Sidebar
+   =================================================================== */
+
+/* ── Dashboard layout ── */
+.admin-dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.admin-main-content {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+}
+
+/* ── Sidebar nav (desktop: fixed, mobile: slide-in drawer) ── */
+.sidebar-nav {
+  width: 240px;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  box-shadow: 4px 0 20px rgba(79, 70, 229, 0.15);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 200;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Hamburger button ── */
+.sidebar-hamburger {
+  display: none; /* hidden on desktop */
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 300;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.sidebar-hamburger:hover {
+  background: #f3f4f6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.sidebar-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2.5px;
+  background: #1e1b4b;
+  border-radius: 4px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar-hamburger span.active:nth-child(1) {
+  transform: translateY(7.5px) rotate(45deg);
+}
+.sidebar-hamburger span.active:nth-child(2) {
+  opacity: 0;
+}
+.sidebar-hamburger span.active:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg);
+}
+
+/* ── Backdrop overlay ── */
+.sidebar-backdrop {
+  display: none; /* hidden on desktop */
+}
+
+/* ===================================================================
+   MOBILE / TABLET — below 960px
+   =================================================================== */
+@media (max-width: 960px) {
+  /* Show hamburger */
+  .sidebar-hamburger {
+    display: flex;
+  }
+
+  /* Show backdrop when sidebar open */
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 199;
+    animation: sidebarFadeIn 0.25s ease;
+  }
+
+  @keyframes sidebarFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .sidebar-nav.sidebar-open {
+    transform: translateX(0);
+  }
+
+  /* Main content takes full width, add top padding for hamburger */
+  .admin-main-content {
+    padding-top: 0.5rem;
+  }
+
+  /* Reduce inner content padding on smaller screens */
+  .admin-main-content > div {
+    padding: 1rem !important;
+  }
+}
+
+/* ===================================================================
+   SMALL PHONE — below 480px
+   =================================================================== */
+@media (max-width: 480px) {
+  .sidebar-nav {
+    width: 260px;
+    min-width: 260px;
+  }
+
+  .sidebar-hamburger {
+    top: 0.75rem;
+    left: 0.75rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .admin-main-content > div {
+    padding: 0.75rem !important;
+  }
+
+  .an-stat-card {
+    padding: 1rem;
+  }
+
+  .an-stat-value {
+    font-size: 1.6rem;
+  }
+
+  .an-stat-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
+
+  .an-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .an-filter-input {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+/* ===================================================================
+   ADMIN OVERVIEW — Mobile reorder + compact stats
+   =================================================================== */
+@media (max-width: 768px) {
+  /* Stack the recent+workers grid vertically */
+  .overview-recent-section {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Compact stat cards — small horizontal strips */
+  .overview-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .overview-stat-card {
+    padding: 0.85rem 1rem !important;
+    gap: 0.65rem !important;
+  }
+
+  .overview-stat-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .overview-stat-icon i {
+    font-size: 1.1rem !important;
+  }
+
+  .overview-stat-value {
+    font-size: 1.35rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .overview-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .overview-stat-card {
+    padding: 0.7rem 0.75rem !important;
+    border-radius: 10px !important;
+  }
+
+  .overview-stat-icon {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+  }
+
+  .overview-stat-icon i {
+    font-size: 0.95rem !important;
+  }
+
+  .overview-stat-value {
+    font-size: 1.15rem !important;
+  }
+}
+
+/* ===================================================================
+   STUDENT DASHBOARD — Responsive sidebar
+   =================================================================== */
+.student-dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.student-main-content {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.student-sidebar {
+  width: 230px;
+  min-width: 230px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  box-shadow: 4px 0 20px rgba(79, 70, 229, 0.15);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 200;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 960px) {
+  .student-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .student-sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .student-main-content {
+    padding-top: 0.5rem;
+  }
+
+  .student-main-content > div {
+    padding: 1rem !important;
+  }
+}
+
+/* ===================================================================
+   STUDENT DASHBOARD HOME — Responsive
+   =================================================================== */
+@media (max-width: 768px) {
+  .student-welcome-banner {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 1.5rem !important;
+  }
+
+  .student-welcome-banner h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .student-complaints-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .student-complaints-actions {
+    justify-content: flex-start !important;
+  }
+
+  .student-filter-bar {
+    flex-direction: column !important;
+  }
+}
+
+/* ===================================================================
+   RAISE COMPLAINT — Responsive sidebar + layout
+   =================================================================== */
+.raise-complaint-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.raise-complaint-sidebar {
+  width: 230px;
+  min-width: 230px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  box-shadow: 4px 0 20px rgba(79, 70, 229, 0.15);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 200;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.raise-complaint-main {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+}
+
+@media (max-width: 960px) {
+  .raise-complaint-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .raise-complaint-sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .raise-complaint-main {
+    padding-top: 0.5rem;
+  }
+
+  .raise-complaint-main > div {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .raise-complaint-location-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .raise-complaint-actions {
+    flex-direction: column !important;
+  }
+
+  .raise-complaint-actions a,
+  .raise-complaint-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ===================================================================
+   LOGIN + REGISTER — Responsive
+   =================================================================== */
+@media (max-width: 768px) {
+  .login-right-panel {
+    padding: 1.5rem !important;
+  }
+
+  .login-form-container {
+    padding: 1.5rem 1rem !important;
+  }
+
+  .login-heading {
+    font-size: 1.6rem !important;
+  }
+
+  .register-right-content {
+    padding: 1.5rem 1.25rem 1rem !important;
+  }
+
+  .register-heading {
+    font-size: 1.7rem !important;
+  }
+
+  .register-form-row {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  .register-search-layout {
+    flex-direction: column !important;
+  }
+
+  .register-search-layout svg {
+    display: none;
+  }
+
+  .register-footer {
+    padding: 1rem 1.25rem !important;
+  }
+}

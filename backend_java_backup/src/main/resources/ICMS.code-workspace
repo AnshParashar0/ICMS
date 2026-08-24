@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../../.."
+		},
+		{
+			"path": "../../../../../rough"
+		},
+		{
+			"path": "../../../../../portfolio"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"liveServer.settings.port": 5501
+	}
+}

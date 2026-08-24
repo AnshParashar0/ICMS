@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { complaintsAPI, apiUtils } from '../backend-api'
 import { toast } from 'react-toastify'
 import logo from '../assets/vecteezy_modern-real-estate-and-construction-logo_19897563.png'
+import '../styles/dashboard.css'
 
 const THEME = {
   gradient: 'linear-gradient(135deg, #1e1b4b 0%, #4f46e5 60%, #7c3aed 100%)',
@@ -69,66 +70,59 @@ function ComplaintDetailModal({ complaint, onClose }) {
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
-function Sidebar({ active, setActive, currentUser, onLogout }) {
+function StudentSidebar({ active, setActive, currentUser, onLogout, mobileOpen, setMobileOpen }) {
   const nav = [
     { key: 'dashboard', icon: 'bi-speedometer2', label: 'Dashboard' },
     { key: 'complaints', icon: 'bi-list-task', label: 'My Complaints' },
   ]
+  const handleNav = (key) => { setActive(key); if (setMobileOpen) setMobileOpen(false) }
   return (
-    <nav style={{ width: '230px', minWidth: '230px', background: THEME.gradient, display: 'flex', flexDirection: 'column', padding: '1.5rem 1rem', boxShadow: '4px 0 20px rgba(79,70,229,0.15)', position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem', padding: '0 0.25rem' }}>
-        <img src={logo} alt="ICMS" style={{ width: '38px', height: '38px', objectFit: 'contain', mixBlendMode: 'screen' }} />
-        <div>
-          <div style={{ color: '#fff', fontWeight: '800', fontSize: '1.1rem' }}>ICMS</div>
-          <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>Student Portal</div>
+    <>
+      <button className="sidebar-hamburger" onClick={() => setMobileOpen && setMobileOpen(p => !p)} aria-label="Toggle menu">
+        <span className={mobileOpen ? 'active' : ''} />
+        <span className={mobileOpen ? 'active' : ''} />
+        <span className={mobileOpen ? 'active' : ''} />
+      </button>
+      {mobileOpen && <div className="sidebar-backdrop" onClick={() => setMobileOpen(false)} />}
+      <nav className={`student-sidebar ${mobileOpen ? 'sidebar-open' : ''}`} style={{ background: THEME.gradient }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem', padding: '0 0.25rem' }}>
+          <img src={logo} alt="ICMS" style={{ width: '38px', height: '38px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+          <div>
+            <div style={{ color: '#fff', fontWeight: '800', fontSize: '1.1rem' }}>ICMS</div>
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>Student Portal</div>
+          </div>
         </div>
-      </div>
-      <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.68rem', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Menu</div>
-      <div style={{ flex: 1 }}>
-        {nav.map(n => (
-          <button key={n.key} onClick={() => setActive(n.key)} style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '0.7rem 1rem', borderRadius: '10px', marginBottom: '4px',
-            color: active === n.key ? '#fff' : 'rgba(255,255,255,0.65)',
-            background: active === n.key ? 'rgba(255,255,255,0.18)' : 'transparent',
-            fontWeight: active === n.key ? '700' : '500', fontSize: '0.9rem',
-            border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s',
-          }}
-            onMouseOver={e => { if (active !== n.key) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-            onMouseOut={e => { if (active !== n.key) e.currentTarget.style.background = 'transparent' }}
-          >
-            <i className={`bi ${n.icon}`} style={{ fontSize: '1rem', flexShrink: 0 }} />
-            {n.label}
+        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.68rem', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Menu</div>
+        <div style={{ flex: 1 }}>
+          {nav.map(n => (
+            <button key={n.key} onClick={() => handleNav(n.key)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '0.7rem 1rem', borderRadius: '10px', marginBottom: '4px', color: active === n.key ? '#fff' : 'rgba(255,255,255,0.65)', background: active === n.key ? 'rgba(255,255,255,0.18)' : 'transparent', fontWeight: active === n.key ? '700' : '500', fontSize: '0.9rem', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
+              onMouseOver={e => { if (active !== n.key) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+              onMouseOut={e => { if (active !== n.key) e.currentTarget.style.background = 'transparent' }}>
+              <i className={`bi ${n.icon}`} style={{ fontSize: '1rem', flexShrink: 0 }} />{n.label}
+            </button>
+          ))}
+          <Link to="/raise-complaint" onClick={() => setMobileOpen && setMobileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.7rem 1rem', borderRadius: '10px', marginBottom: '4px', color: 'rgba(255,255,255,0.65)', fontWeight: '500', fontSize: '0.9rem', textDecoration: 'none', transition: 'background 0.15s' }}
+            onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+            <i className="bi bi-plus-circle" style={{ fontSize: '1rem' }} />Raise Complaint
+          </Link>
+        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', paddingTop: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.75rem', padding: '0 0.25rem' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', color: '#fff', fontSize: '1rem', flexShrink: 0 }}>
+              {currentUser ? currentUser.name.charAt(0).toUpperCase() : 'S'}
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ color: '#fff', fontWeight: '600', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser?.name || 'Student'}</div>
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>Student</div>
+            </div>
+          </div>
+          <button onClick={onLogout} style={{ width: '100%', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '8px', padding: '0.55rem 1rem', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <i className="bi bi-box-arrow-right" /> Logout
           </button>
-        ))}
-        <Link to="/raise-complaint" style={{
-          display: 'flex', alignItems: 'center', gap: '10px',
-          padding: '0.7rem 1rem', borderRadius: '10px', marginBottom: '4px',
-          color: 'rgba(255,255,255,0.65)', fontWeight: '500', fontSize: '0.9rem',
-          textDecoration: 'none', transition: 'background 0.15s',
-        }}
-          onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-          onMouseOut={e => e.currentTarget.style.background = 'transparent'}
-        >
-          <i className="bi bi-plus-circle" style={{ fontSize: '1rem' }} />
-          Raise Complaint
-        </Link>
-      </div>
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', paddingTop: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.75rem', padding: '0 0.25rem' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', color: '#fff', fontSize: '1rem', flexShrink: 0 }}>
-            {currentUser ? currentUser.name.charAt(0).toUpperCase() : 'S'}
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div style={{ color: '#fff', fontWeight: '600', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser?.name || 'Student'}</div>
-            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>Student</div>
-          </div>
         </div>
-        <button onClick={onLogout} style={{ width: '100%', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '8px', padding: '0.55rem 1rem', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <i className="bi bi-box-arrow-right" /> Logout
-        </button>
-      </div>
-    </nav>
+      </nav>
+    </>
   )
 }
 
@@ -313,6 +307,7 @@ function StudentDashboardPage() {
   const [complaints, setComplaints] = useState([])
   const [loading, setLoading] = useState(true)
   const [active, setActive] = useState('dashboard')
+  const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -337,9 +332,9 @@ function StudentDashboardPage() {
   const logout = () => { localStorage.removeItem('currentUser'); navigate('/login') }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
-      <Sidebar active={active} setActive={setActive} currentUser={currentUser} onLogout={logout} />
-      <main style={{ flex: 1, overflow: 'auto', minWidth: 0, display: 'flex', justifyContent: 'center' }}>
+    <div className="student-dashboard-layout">
+      <StudentSidebar active={active} setActive={setActive} currentUser={currentUser} onLogout={logout} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <main className="student-main-content">
         <div style={{ width: '100%', maxWidth: '1600px', margin: '0 auto', padding: '2rem 1.5rem', boxSizing: 'border-box' }}>
           {active === 'dashboard'  && <DashboardHome currentUser={currentUser} complaints={complaints} loading={loading} setActive={setActive} />}
           {active === 'complaints' && <MyComplaintsSection complaints={complaints} loading={loading} onRefresh={loadComplaints} />}

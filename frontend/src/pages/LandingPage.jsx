@@ -298,7 +298,7 @@ export default function LandingPage() {
           <a
             href="#"
             className="lp-btn lp-btn-dark"
-            onClick={(e) => { e.preventDefault(); navigate("/register"); }}
+            onClick={(e) => { e.preventDefault(); navigate("/contact"); }}
           >
             Get In Touch
           </a>

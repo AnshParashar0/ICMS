@@ -1,0 +1,242 @@
+/* ===================================================================
+   GetInTouch.css — Single-page centered form layout
+   =================================================================== */
+
+/* ---------- Full-page wrapper ---------- */
+.git-page {
+  font-family: "Poppins", sans-serif;
+  background: #f5f5f7;
+  color: #1f173d;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+.git-page *,
+.git-page *::before,
+.git-page *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- BACK BUTTON ---------- */
+.git-back-btn {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #e0d9f5;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #673de6;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.git-back-btn:hover {
+  background: #ede9fc;
+  border-color: #673de6;
+  box-shadow: 0 2px 12px rgba(103, 61, 230, 0.12);
+  transform: translateX(-2px);
+}
+
+.git-back-btn:active {
+  transform: scale(0.96);
+}
+
+.git-back-btn svg {
+  flex-shrink: 0;
+}
+
+/* ---------- FORM CARD ---------- */
+.git-form-wrap {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem 1.75rem;
+  border: 1px solid #ece8f7;
+  box-shadow: 0 4px 32px rgba(103, 61, 230, 0.06);
+  width: 100%;
+  max-width: 500px;
+}
+
+.git-form-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f173d;
+  margin-bottom: 0.3rem;
+}
+
+.git-form-sub {
+  font-size: 0.88rem;
+  color: #6b6490;
+  margin-bottom: 1.5rem;
+}
+
+.git-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.git-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.git-form-group label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1f173d;
+}
+
+.git-form-group input,
+.git-form-group select,
+.git-form-group textarea {
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid #e0d9f5;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  color: #1f173d;
+  background: #f5f5f7;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  -webkit-appearance: none;
+}
+
+.git-form-group input:focus,
+.git-form-group select:focus,
+.git-form-group textarea:focus {
+  border-color: #673de6;
+  background: #fff;
+}
+
+.git-form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.git-form-group select { cursor: pointer; }
+
+/* Checkbox */
+.git-form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.git-form-check input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: #673de6;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.git-form-check label {
+  font-size: 0.82rem;
+  color: #514b76;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+/* Submit Button */
+.git-btn-submit {
+  width: 100%;
+  min-height: 50px;
+  background: #17d4bb;
+  color: #1d1140;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.git-btn-submit:hover { background: #10b9a2; transform: translateY(-1px); }
+.git-btn-submit:active { transform: scale(0.98); }
+
+/* Validation Error */
+.git-field-error {
+  font-size: 0.78rem;
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+/* ---------- SUCCESS MESSAGE ---------- */
+.git-success-msg {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.git-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #eafdfa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.git-success-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: #0fa88f;
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.git-success-msg h3 {
+  font-size: 1.25rem;
+  color: #1f173d;
+  margin-bottom: 0.5rem;
+}
+
+.git-success-msg p {
+  font-size: 0.92rem;
+  color: #6b6490;
+  line-height: 1.6;
+}
+
+/* ===================================================================
+   TABLET — 481px+
+   =================================================================== */
+@media (min-width: 481px) {
+  .git-form-row { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .git-form-wrap { padding: 2.5rem; }
+  .git-back-btn { top: 1.5rem; left: 1.5rem; }
+}
+
+/* ===================================================================
+   DESKTOP — 768px+
+   =================================================================== */
+@media (min-width: 768px) {
+  .git-page { padding: 3rem 2rem; }
+  .git-form-wrap { max-width: 520px; }
+  .git-form-title { font-size: 1.3rem; }
+  .git-back-btn { top: 2rem; left: 2rem; font-size: 0.92rem; padding: 0.55rem 1.15rem; }
+}
