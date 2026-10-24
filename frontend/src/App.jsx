@@ -7,6 +7,8 @@ import StudentDashboardPage from './pages/StudentDashboardPage'
 import RaiseComplaintPage from './pages/RaiseComplaintPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import GetInTouchPage from './pages/GetInTouchPage'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/raise-complaint" element={<RaiseComplaintPage />} />
         <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
         <Route path="/contact" element={<GetInTouchPage />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </BrowserRouter>
   )

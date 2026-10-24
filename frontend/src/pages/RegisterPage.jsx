@@ -580,8 +580,8 @@ function RegisterPage() {
               <span style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1f2937' }}>ICMS</span>
             </div>
             <a href="mailto:support@icms.edu" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>support@icms.edu</a>
-            <a href="#" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none' }}>Terms of Use</a>
-            <a href="#" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none' }}>Privacy Policy</a>
+            <Link to="/terms" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none' }}>Terms of Use</Link>
+            <Link to="/privacy" style={{ color: '#6b7280', fontSize: '0.8rem', textDecoration: 'none' }}>Privacy Policy</Link>
           </div>
           <span style={{ color: '#9ca3af', fontSize: '0.78rem' }}>© 2025 ICMS. Infrastructure Complaint Management System</span>
         </div>

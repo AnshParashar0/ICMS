@@ -190,8 +190,8 @@ function LoginPage() {
               <img src={logo} alt="ICMS Logo" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
               <span style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1f2937' }}>ICMS</span>
             </div>
-            <a href="#" style={{ color: '#9ca3af', fontSize: '0.82rem', textDecoration: 'none' }}>Privacy Policy</a>
-            <a href="#" style={{ color: '#9ca3af', fontSize: '0.82rem', textDecoration: 'none' }}>Terms of Use</a>
+            <Link to="/privacy" style={{ color: '#9ca3af', fontSize: '0.82rem', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link to="/terms" style={{ color: '#9ca3af', fontSize: '0.82rem', textDecoration: 'none' }}>Terms of Use</Link>
           </div>
           <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>© 2025 ICMS</span>
         </div>
